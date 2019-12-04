@@ -10,5 +10,12 @@ package routeappjpa;
  * @author Unai Pérez Sánchez
  */
 public enum TrafficMode {
-    ENABLED,DISABLED;
+    /**
+     * Will be take into account the traffic
+     */
+    ENABLED,
+    /**
+     * The traffic will not be taken into account
+     */
+    DISABLED;
 }

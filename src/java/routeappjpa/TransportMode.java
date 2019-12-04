@@ -10,5 +10,12 @@ package routeappjpa;
  * @author Unai Pérez Sánchez
  */
 public enum TransportMode {
-    CAR,CAR_HOV,PEDESTRIAN,TRUCK,BICYCLE;
+    CAR,
+    /**
+     * A car with more than 5 seats
+     */
+    CAR_HOV,
+    PEDESTRIAN,
+    TRUCK,
+    BICYCLE;
 }

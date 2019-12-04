@@ -10,5 +10,16 @@ package routeappjpa;
  * @author Unai Pérez Sánchez
  */
 public enum Mode {
-    FASTEST,SHORTEST,BALANCED;
+    /**
+     * The fastest way of doing the route
+     */
+    FASTEST,
+    /**
+     * The shortest way of doing the route
+     */
+    SHORTEST,
+    /**
+     * A mix of the fastest and shortest route
+     */
+    BALANCED;
 }
