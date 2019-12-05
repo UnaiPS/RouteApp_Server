@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -30,41 +32,28 @@ public class Route implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     /**
-     * The coordinates of the shape of the route (middle points between origin
-     * and the destination)
+     * The coordinates of the route with the attributes of all the points of the 
+     * route
      */
+    @OneToMany
     @NotNull
-    private Set<Coordinate> coordinates;
-    /**
-     * The route will have one or more destinations
-     */
-    @NotNull
-    private Set<Destination> destinations;
-    /**
-     * The delivery man/technician when marks a destination as visited will be
-     * added
-     */
-    @NotNull
-    private Set<Coordinate> visitedDestinations;
-    /**
-     * The information about the administrator that created the route
-     */
-    @NotNull
-    private User createdBy;
-    /**
-     * The delivery man/technician assigned to the route
-     */
-    private User assignedTo;
-    /**
-     * The start point of the route
-     */
-    @NotNull
-    private Origin origin;
+    private Set<Coordinate_Route> coordinates;
     /**
      * The name of the route that the administrator assigned
      */
     @NotNull
     private String name;
+    /**
+     * The information about the administrator that created the route
+     */
+    @ManyToOne
+    @NotNull
+    private User createdBy;
+    /**
+     * The delivery man/technician assigned to the route
+     */
+    @ManyToOne
+    private User assignedTo;
     /**
      * The distance that the driver will be doing
      */
@@ -111,45 +100,16 @@ public class Route implements Serializable{
     /**
      * @return the coordinates
      */
-    public Set<Coordinate> getCoordinates() {
+    public Set<Coordinate_Route> getCoordinates() {
         return coordinates;
     }
 
     /**
      * @param coordinates the coordinates to set
      */
-    public void setCoordinates(Set<Coordinate> coordinates) {
+    public void setCoordinates(Set<Coordinate_Route> coordinates) {
         this.coordinates = coordinates;
     }
-
-    /**
-     * @return the destinations
-     */
-    public Set<Destination> getDestinations() {
-        return destinations;
-    }
-
-    /**
-     * @param destinations the destinations to set
-     */
-    public void setDestinations(Set<Destination> destinations) {
-        this.destinations = destinations;
-    }
-
-    /**
-     * @return the visitedDestinations
-     */
-    public Set<Coordinate> getVisitedDestinations() {
-        return visitedDestinations;
-    }
-
-    /**
-     * @param visitedDestinations the visitedDestinations to set
-     */
-    public void setVisitedDestinations(Set<Coordinate> visitedDestinations) {
-        this.visitedDestinations = visitedDestinations;
-    }
-
     /**
      * @return the createdBy
      */
@@ -176,20 +136,6 @@ public class Route implements Serializable{
      */
     public void setAssignedTo(User assignedTo) {
         this.assignedTo = assignedTo;
-    }
-
-    /**
-     * @return the origin
-     */
-    public Origin getOrigin() {
-        return origin;
-    }
-
-    /**
-     * @param origin the origin to set
-     */
-    public void setOrigin(Origin origin) {
-        this.origin = origin;
     }
 
     /**
@@ -306,8 +252,8 @@ public class Route implements Serializable{
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 11 * hash + Objects.hashCode(this.id);
+        int hash = 7;
+        hash = 43 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -326,10 +272,16 @@ public class Route implements Serializable{
         if (!Objects.equals(this.coordinates, other.coordinates)) {
             return false;
         }
-        if (!Objects.equals(this.destinations, other.destinations)) {
+        if (!Objects.equals(this.totalDistance, other.totalDistance)) {
             return false;
         }
-        if (!Objects.equals(this.origin, other.origin)) {
+        if (this.mode != other.mode) {
+            return false;
+        }
+        if (this.transportMode != other.transportMode) {
+            return false;
+        }
+        if (this.trafficMode != other.trafficMode) {
             return false;
         }
         return true;
@@ -337,12 +289,9 @@ public class Route implements Serializable{
 
     @Override
     public String toString() {
-        return "Route{" + "id=" + id + ", destinations=" + destinations +
-                ", createdBy=" + createdBy + ", assignedTo=" + assignedTo +
-                ", origin=" + origin + ", name=" + name + ", totalDistance=" +
-                totalDistance + ", estimatedTime=" + estimatedTime + ", started=" +
-                started + ", ended=" + ended + ", mode=" + mode + ", transportMode=" +
-                transportMode + ", trafficMode=" + trafficMode + '}';
+        return "Route{" + "id=" + id + ", name=" + name + ", createdBy=" + createdBy + ", assignedTo=" + assignedTo + ", totalDistance=" + totalDistance + ", estimatedTime=" + estimatedTime + ", started=" + started + ", ended=" + ended + ", mode=" + mode + ", transportMode=" + transportMode + ", trafficMode=" + trafficMode + '}';
     }
+
+    
     
 }
