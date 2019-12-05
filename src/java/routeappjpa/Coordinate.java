@@ -6,12 +6,8 @@
 package routeappjpa;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,6 +24,8 @@ public class Coordinate implements Serializable {
     private Double latitude;
     @NotNull
     private Double longitude;
+    @NotNull
+    private Type type;
     @ManyToOne
     private Route route;
 
@@ -74,6 +72,20 @@ public class Coordinate implements Serializable {
     }
 
     /**
+     * @return the type
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    /**
      * @return the route
      */
     public Route getRoute() {
@@ -86,6 +98,8 @@ public class Coordinate implements Serializable {
     public void setRoute(Route route) {
         this.route = route;
     }
+
+    
 
     
 }

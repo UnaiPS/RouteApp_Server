@@ -6,12 +6,9 @@
 package routeappjpa;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
+import java.sql.Timestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,7 +24,8 @@ public class Sesion implements Serializable {
     @NotNull
     private String code;
     @NotNull
-    private Date lastAction;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp lastAction;
 
     
 
@@ -45,19 +43,7 @@ public class Sesion implements Serializable {
         this.code = code;
     }
 
-    /**
-     * @return the lastAction
-     */
-    public Date getLastAction() {
-        return lastAction;
-    }
-
-    /**
-     * @param lastAction the lastAction to set
-     */
-    public void setLastAction(Date lastAction) {
-        this.lastAction = lastAction;
-    }
+    
 
     /**
      * @return the logged
@@ -71,5 +57,19 @@ public class Sesion implements Serializable {
      */
     public void setLogged(User logged) {
         this.logged = logged;
+    }
+
+    /**
+     * @return the lastAction
+     */
+    public Timestamp getLastAction() {
+        return lastAction;
+    }
+
+    /**
+     * @param lastAction the lastAction to set
+     */
+    public void setLastAction(Timestamp lastAction) {
+        this.lastAction = lastAction;
     }
 }
