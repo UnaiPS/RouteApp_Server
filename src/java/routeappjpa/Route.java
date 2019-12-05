@@ -65,22 +65,27 @@ public class Route implements Serializable{
     /**
      * If the route has been started or not
      */
+    @NotNull
     private Boolean started;
     /**
      * If the Route has been ended or not
      */
+    @NotNull
     private Boolean ended;
     /**
      * The mode of the route (FASTEST,SHORTEST,BALANCED)
      */
+    @NotNull
     private Mode mode;
     /**
      * The type of the vehicle that the driver is going to use
      */
+    @NotNull
     private TransportMode transportMode;
     /**
      * When is creating the route if takes into account the traffic at the moment
      */
+    @NotNull
     private TrafficMode trafficMode;
 
     /**
