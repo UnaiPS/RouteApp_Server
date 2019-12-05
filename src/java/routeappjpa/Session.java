@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
  * @author Jon Calvo Gaminde
  */
 @Entity
-@Table(name="sesion", schema="routedbjpa")
-public class Sesion implements Serializable {
+@Table(name="session", schema="routedbjpa")
+public class Session implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @OneToOne
@@ -96,7 +96,7 @@ public class Sesion implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Sesion other = (Sesion) obj;
+        final Session other = (Session) obj;
         if (!Objects.equals(this.logged, other.logged)) {
             return false;
         }
@@ -105,7 +105,7 @@ public class Sesion implements Serializable {
 
     @Override
     public String toString() {
-        return "Sesion{" + "logged=" + logged + ", lastAction=" + lastAction + '}';
+        return "Session{" + "logged=" + logged + ", lastAction=" + lastAction + '}';
     }
     
 }
