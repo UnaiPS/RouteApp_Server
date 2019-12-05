@@ -6,12 +6,9 @@
 package routeappjpa;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
+import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,8 +25,8 @@ public class Coordinate implements Serializable {
     private Double latitude;
     @NotNull
     private Double longitude;
-    @ManyToOne
-    private Route route;
+    @NotNull
+    private Type type;
 
     /**
      * @return the id
@@ -74,18 +71,57 @@ public class Coordinate implements Serializable {
     }
 
     /**
-     * @return the route
+     * @return the type
      */
-    public Route getRoute() {
-        return route;
+    public Type getType() {
+        return type;
     }
 
     /**
-     * @param route the route to set
+     * @param type the type to set
      */
-    public void setRoute(Route route) {
-        this.route = route;
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.latitude);
+        hash = 37 * hash + Objects.hashCode(this.longitude);
+        hash = 37 * hash + Objects.hashCode(this.type);
+        return hash;
     }
 
     
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate other = (Coordinate) obj;
+        if (!Objects.equals(this.latitude, other.latitude)) {
+            return false;
+        }
+        if (!Objects.equals(this.longitude, other.longitude)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Coordinate(" + latitude + "|" + longitude + ") " + type;
+    }
 }
