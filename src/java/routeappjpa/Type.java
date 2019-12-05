@@ -7,15 +7,8 @@ package routeappjpa;
 
 /**
  *
- * @author Unai Pérez Sánchez
+ * @author 2dam
  */
-public enum TrafficMode {
-    /**
-     * Will be take into account the traffic
-     */
-    ENABLED,
-    /**
-     * The traffic will not be taken into account
-     */
-    DISABLED;
+public enum Type {
+    WAYPOINT,ORIGIN,DESTINATION,GPS
 }
