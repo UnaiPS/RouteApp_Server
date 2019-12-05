@@ -6,8 +6,10 @@
 package routeappjpa;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -18,7 +20,9 @@ import javax.persistence.*;
 public class Direction implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @OneToOne
     private Coordinate coordinate;
+    @NotNull
     private String name;
     private String country;
     private String state;
@@ -168,4 +172,47 @@ public class Direction implements Serializable {
     public void setPostalCode(Integer postalCode) {
         this.postalCode = postalCode;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.coordinate);
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + Objects.hashCode(this.country);
+        hash = 89 * hash + Objects.hashCode(this.state);
+        hash = 89 * hash + Objects.hashCode(this.county);
+        hash = 89 * hash + Objects.hashCode(this.city);
+        hash = 89 * hash + Objects.hashCode(this.district);
+        hash = 89 * hash + Objects.hashCode(this.street);
+        hash = 89 * hash + Objects.hashCode(this.houseNumber);
+        hash = 89 * hash + Objects.hashCode(this.postalCode);
+        return hash;
+    }
+
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Direction other = (Direction) obj;
+        if (!Objects.equals(this.coordinate, other.coordinate)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Direction " + name + "{country=" + country + ", state=" + state + ", county=" + county + ", city=" + city + ", district=" + district + ", street=" + street + ", houseNumber=" + houseNumber + ", postalCode=" + postalCode + '}';
+    }
+    
+    
 }

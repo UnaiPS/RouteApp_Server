@@ -6,8 +6,10 @@
 package routeappjpa;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -17,12 +19,17 @@ import javax.persistence.*;
 @Table(name="coordinate_route", schema="routedbjpa")
 public class Coordinate_Route implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Id
+    @EmbeddedId
+    private Coordinate_RouteId id;
+    @MapsId("routeId")
+    @ManyToOne
     private Route route;
-    @Id
+    @MapsId("coordinateId")
+    @ManyToOne
     private Coordinate coordinate;
-    private int order;
-    private long visited;
+    @NotNull
+    private Integer order;
+    private Long visited;
 
     /**
      * @return the route
@@ -55,28 +62,72 @@ public class Coordinate_Route implements Serializable {
     /**
      * @return the order
      */
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
     /**
      * @param order the order to set
      */
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
     /**
      * @return the visited
      */
-    public long getVisited() {
+    public Long getVisited() {
         return visited;
     }
 
     /**
      * @param visited the visited to set
      */
-    public void setVisited(long visited) {
+    public void setVisited(Long visited) {
         this.visited = visited;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.route);
+        hash = 37 * hash + Objects.hashCode(this.coordinate);
+        hash = 37 * hash + Objects.hashCode(this.order);
+        hash = 37 * hash + Objects.hashCode(this.visited);
+        return hash;
+    }
+
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate_Route other = (Coordinate_Route) obj;
+        if (!Objects.equals(this.route, other.route)) {
+            return false;
+        }
+        if (!Objects.equals(this.coordinate, other.coordinate)) {
+            return false;
+        }
+        if (!Objects.equals(this.order, other.order)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Coordinate_Route{" + "route=" + route + ", order=" + order + '}';
+    }
+
+    
 }

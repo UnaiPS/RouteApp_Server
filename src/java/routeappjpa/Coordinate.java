@@ -6,6 +6,7 @@
 package routeappjpa;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -26,8 +27,6 @@ public class Coordinate implements Serializable {
     private Double longitude;
     @NotNull
     private Type type;
-    @ManyToOne
-    private Route route;
 
     /**
      * @return the id
@@ -85,21 +84,44 @@ public class Coordinate implements Serializable {
         this.type = type;
     }
 
-    /**
-     * @return the route
-     */
-    public Route getRoute() {
-        return route;
-    }
-
-    /**
-     * @param route the route to set
-     */
-    public void setRoute(Route route) {
-        this.route = route;
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.latitude);
+        hash = 37 * hash + Objects.hashCode(this.longitude);
+        hash = 37 * hash + Objects.hashCode(this.type);
+        return hash;
     }
 
     
 
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate other = (Coordinate) obj;
+        if (!Objects.equals(this.latitude, other.latitude)) {
+            return false;
+        }
+        if (!Objects.equals(this.longitude, other.longitude)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Coordinate(" + latitude + "|" + longitude + ") " + type;
+    }
 }

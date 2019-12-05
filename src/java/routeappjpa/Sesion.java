@@ -7,6 +7,7 @@ package routeappjpa;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -72,4 +73,39 @@ public class Sesion implements Serializable {
     public void setLastAction(Timestamp lastAction) {
         this.lastAction = lastAction;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.logged);
+        hash = 23 * hash + Objects.hashCode(this.code);
+        hash = 23 * hash + Objects.hashCode(this.lastAction);
+        return hash;
+    }
+
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Sesion other = (Sesion) obj;
+        if (!Objects.equals(this.logged, other.logged)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Sesion{" + "logged=" + logged + ", lastAction=" + lastAction + '}';
+    }
+    
 }
