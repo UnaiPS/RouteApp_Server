@@ -253,7 +253,18 @@ public class Route implements Serializable{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.id);
+        hash = 79 * hash + Objects.hashCode(this.id);
+        hash = 79 * hash + Objects.hashCode(this.coordinates);
+        hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 79 * hash + Objects.hashCode(this.createdBy);
+        hash = 79 * hash + Objects.hashCode(this.assignedTo);
+        hash = 79 * hash + Objects.hashCode(this.totalDistance);
+        hash = 79 * hash + Objects.hashCode(this.estimatedTime);
+        hash = 79 * hash + Objects.hashCode(this.started);
+        hash = 79 * hash + Objects.hashCode(this.ended);
+        hash = 79 * hash + Objects.hashCode(this.mode);
+        hash = 79 * hash + Objects.hashCode(this.transportMode);
+        hash = 79 * hash + Objects.hashCode(this.trafficMode);
         return hash;
     }
 
