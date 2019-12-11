@@ -16,13 +16,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Unai Pérez Sánchez
  */
 @Entity
-@Table(name = "route",schema = "routedbjpa")
+@Table(name = "route",schema = "routesdb")
+@XmlRootElement
 public class Route implements Serializable{
     private static final long serialVersionUID = 1L;
     /**
@@ -35,7 +38,7 @@ public class Route implements Serializable{
      * The coordinates of the route with the attributes of all the points of the 
      * route
      */
-    @OneToMany
+    @OneToMany(mappedBy = "route")
     @NotNull
     private Set<Coordinate_Route> coordinates;
     /**
@@ -105,6 +108,7 @@ public class Route implements Serializable{
     /**
      * @return the coordinates
      */
+    @XmlTransient
     public Set<Coordinate_Route> getCoordinates() {
         return coordinates;
     }

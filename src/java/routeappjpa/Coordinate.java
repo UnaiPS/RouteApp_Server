@@ -7,15 +7,18 @@ package routeappjpa;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Jon Calvo Gaminde
  */
 @Entity
-@Table(name="coordinate", schema="routedbjpa")
+@Table(name="coordinate", schema="routesdb")
+@XmlRootElement
 public class Coordinate implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -27,6 +30,8 @@ public class Coordinate implements Serializable {
     private Double longitude;
     @NotNull
     private Type type;
+//    @OneToMany(mappedBy = "coordinate")
+//    private Set<Coordinate_Route> routes;
 
     /**
      * @return the id

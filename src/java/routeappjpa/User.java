@@ -26,7 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 
 @Entity
-@Table(name="User", schema="routedbjpa")
+@Table(name="user", schema="routesdb")
+@XmlRootElement
 public class User implements Serializable{
         private static final long serialVersionUID=1L;
 
@@ -39,16 +40,8 @@ public class User implements Serializable{
         private Status status;
         private Privilege privilege;
         private String password;
-        @Temporal(TemporalType.TIMESTAMP)
         private Timestamp lastAccess;
-        @Temporal(TemporalType.TIMESTAMP)
         private Timestamp lastPasswordChange;
-        @OneToMany(mappedBy="route")
-        @JoinTable(name="user_route", schema="bankdbjpa")
-        private Set<Route> routes;
-        private Session session;
-        
-       
 
     public Long getId() {
         return id;
@@ -122,13 +115,7 @@ public class User implements Serializable{
         this.lastPasswordChange = lastPasswordChange;
     }
 
-    public Collection<Route> getRoutes() {
-        return routes;
-    }
-
-    public void setRoutes(Set<Route> routes) {
-        this.routes = routes;
-    }
+    
 
     @Override
     public int hashCode() {
@@ -142,8 +129,6 @@ public class User implements Serializable{
         hash = 47 * hash + Objects.hashCode(this.password);
         hash = 47 * hash + Objects.hashCode(this.lastAccess);
         hash = 47 * hash + Objects.hashCode(this.lastPasswordChange);
-        hash = 47 * hash + Objects.hashCode(this.routes);
-        hash = 47 * hash + Objects.hashCode(this.session);
         return hash;
     }
 
@@ -188,9 +173,6 @@ public class User implements Serializable{
         if (!Objects.equals(this.lastPasswordChange, other.lastPasswordChange)) {
             return false;
         }
-        if (!Objects.equals(this.routes, other.routes)) {
-            return false;
-        }
         return true;
     }
 
@@ -200,7 +182,7 @@ public class User implements Serializable{
                 fullName + ", email=" + email + ", status=" + status + 
                 ", privilege=" + privilege + ", password=" + password + 
                 ", lastAccess=" + lastAccess + ", lastPasswordChange=" 
-                + lastPasswordChange + ", routes=" + routes + '}';
+                + lastPasswordChange + '}';
     }
     
     

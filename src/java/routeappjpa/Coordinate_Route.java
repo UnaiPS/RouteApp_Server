@@ -7,16 +7,17 @@ package routeappjpa;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author 2dam
  */
 @Entity
-@Table(name="coordinate_route", schema="routedbjpa")
+@Table(name="coordinate_route", schema="routesdb")
+@XmlRootElement
 public class Coordinate_Route implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -28,7 +29,7 @@ public class Coordinate_Route implements Serializable {
     @ManyToOne
     private Coordinate coordinate;
     @NotNull
-    private Integer order;
+    private Integer wayOrder;
     private Long visited;
 
     /**
@@ -63,14 +64,14 @@ public class Coordinate_Route implements Serializable {
      * @return the order
      */
     public Integer getOrder() {
-        return order;
+        return wayOrder;
     }
 
     /**
      * @param order the order to set
      */
     public void setOrder(Integer order) {
-        this.order = order;
+        this.wayOrder = order;
     }
 
     /**
@@ -93,7 +94,7 @@ public class Coordinate_Route implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.id);
         hash = 37 * hash + Objects.hashCode(this.route);
         hash = 37 * hash + Objects.hashCode(this.coordinate);
-        hash = 37 * hash + Objects.hashCode(this.order);
+        hash = 37 * hash + Objects.hashCode(this.wayOrder);
         hash = 37 * hash + Objects.hashCode(this.visited);
         return hash;
     }
@@ -118,7 +119,7 @@ public class Coordinate_Route implements Serializable {
         if (!Objects.equals(this.coordinate, other.coordinate)) {
             return false;
         }
-        if (!Objects.equals(this.order, other.order)) {
+        if (!Objects.equals(this.wayOrder, other.wayOrder)) {
             return false;
         }
         return true;
@@ -126,7 +127,7 @@ public class Coordinate_Route implements Serializable {
 
     @Override
     public String toString() {
-        return "Coordinate_Route{" + "route=" + route + ", order=" + order + '}';
+        return "Coordinate_Route{" + "route=" + route + ", order=" + wayOrder + '}';
     }
 
     

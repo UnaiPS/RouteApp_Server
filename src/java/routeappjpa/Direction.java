@@ -10,13 +10,15 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Jon Calvo Gaminde
  */
 @Entity
-@Table(name="direction", schema="routedbjpa")
+@Table(name="direction", schema="routesdb")
+@XmlRootElement
 public class Direction implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
