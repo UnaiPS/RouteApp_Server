@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -23,6 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Unai Pérez Sánchez
  */
+@NamedQueries({
+    @NamedQuery(
+            name = "findAllRoutes",
+            query = "SELECT r FROM Route r ORDER BY r.id"),
+    @NamedQuery(
+            name = "findByAssignedUser",
+            query = "SELECT r FROM Route r WHERE r.assignedTo=:assignedTo")
+})
 @Entity
 @Table(name = "route",schema = "routesdb")
 @XmlRootElement

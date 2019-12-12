@@ -28,13 +28,10 @@ public class ApplicationConfig extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
+    //TODO
+    //Add all the REST
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(service.CoordinateFacadeREST.class);
-        resources.add(service.Coordinate_RouteFacadeREST.class);
-        resources.add(service.DirectionFacadeREST.class);
         resources.add(service.RouteFacadeREST.class);
-        resources.add(service.SessionFacadeREST.class);
-        resources.add(service.UserFacadeREST.class);
     }
     
 }

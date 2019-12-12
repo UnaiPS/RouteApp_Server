@@ -5,13 +5,17 @@
  */
 package service;
 
+import exception.CreateException;
+import exception.DeleteException;
+import exception.FindException;
+import exception.UpdateException;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,68 +28,79 @@ import routeappjpa.Route;
  *
  * @author Unai Pérez Sánchez
  */
-@Stateless
 @Path("routeappjpa.route")
-public class RouteFacadeREST extends AbstractFacade<Route> {
-
-    @PersistenceContext(unitName = "RouteJPAPU")
-    private EntityManager em;
-
-    public RouteFacadeREST() {
-        super(Route.class);
-    }
-
+public class RouteFacadeREST {
+    @EJB
+    private RouteManagerLocal ejb;
+    
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Route entity) {
-        super.create(entity);
+    @Consumes({MediaType.APPLICATION_XML})
+    public void create(Route route) {
+        try {
+            ejb.createRoute(route);
+        } catch (CreateException ex) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Long id, Route entity) {
-        super.edit(entity);
+    @Consumes({MediaType.APPLICATION_XML})
+    public void edit(Route route) {
+        try {
+            ejb.updateRoute(route);
+        } catch (UpdateException ex) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
-        super.remove(super.find(id));
+        try {
+            ejb.removeRoute(id);
+        } catch (DeleteException ex) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public Route find(@PathParam("id") Long id) {
-        return super.find(id);
+        try {
+            return ejb.findRoute(id);
+        } catch (FindException ex) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public List<Route> findAll() {
-        return super.findAll();
+        try {
+            return ejb.findAllRoutes();
+        } catch (Exception e) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        
     }
 
     @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Route> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    @Path("assignedTo/{id}")
+    @Produces({MediaType.APPLICATION_XML})
+    public List<Route> findByAssignedTo(@PathParam("id") Long userId) {
+        try {
+            return ejb.findByAssignedUser(userId);
+        } catch (Exception e) {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        
     }
     
 }
