@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service;
+package exceptions;
 
 /**
  *
  * @author 2dam
  */
-class UserNotFoundException extends Exception {
+public class DeleteException extends Exception {
 
-    UserNotFoundException(String message) {
+    public DeleteException(String message) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

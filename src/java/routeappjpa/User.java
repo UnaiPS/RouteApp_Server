@@ -2,25 +2,18 @@ package routeappjpa;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * This entity defines a user of the application with its respective data.
@@ -30,8 +23,15 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name="user", schema="routesdb")
 @NamedQueries({
-@NamedQuery(name="findAllDeliveryAccounts", query = "select u from User u where u.privilege=:2"),
-@NamedQuery(name="findAll", query="select u from User a ORDER BY a.id")
+@NamedQuery(
+        name="findAllDeliveryAccounts", 
+        query = "SELECT u FROM User u WHERE u.privilege=routeappjpa.Privilege.USER"),
+@NamedQuery(name="findAll", query="select u from User u ORDER BY u.id"),
+@NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login"),
+@NamedQuery(name="editPasswd", 
+        query="update User set u.fullName = :data.fullName, u.email = :data.email, "
+                + "u.password = :data.newpassword, u.lastPasswordChange = :data.lastPasswordChange"
+                + " from User u where u.login =:data.login ")
 })
 @XmlRootElement
 public class User implements Serializable{
@@ -46,8 +46,10 @@ public class User implements Serializable{
         private Status status;
         private Privilege privilege;
         private String password;
-        private Timestamp lastAccess;
-        private Timestamp lastPasswordChange;
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date lastAccess;
+        @Temporal(TemporalType.TIMESTAMP)
+        private Date lastPasswordChange;
 
     public Long getId() {
         return id;
@@ -105,19 +107,19 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public Timestamp getLastAccess() {
+    public Date getLastAccess() {
         return lastAccess;
     }
 
-    public void setLastAccess(Timestamp lastAccess) {
+    public void setLastAccess(Date lastAccess) {
         this.lastAccess = lastAccess;
     }
 
-    public Timestamp getLastPasswordChange() {
+    public Date getLastPasswordChange() {
         return lastPasswordChange;
     }
 
-    public void setLastPasswordChange(Timestamp lastPasswordChange) {
+    public void setLastPasswordChange(Date lastPasswordChange) {
         this.lastPasswordChange = lastPasswordChange;
     }
 
@@ -190,9 +192,4 @@ public class User implements Serializable{
                 ", lastAccess=" + lastAccess + ", lastPasswordChange=" 
                 + lastPasswordChange + '}';
     }
-    
-    
-    
-    
-        
 }

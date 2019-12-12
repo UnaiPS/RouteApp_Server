@@ -5,10 +5,17 @@
  */
 package service;
 
+import exceptions.DeleteException;
+import exceptions.EdittingException;
+import exceptions.CreateException;
+import exceptions.UserNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import messages.UserPasswd;
 import routeappjpa.User;
 
 /**
@@ -16,7 +23,7 @@ import routeappjpa.User;
  * @author Daira Eguzkiza
  */
 @Stateless
-public class EJBUser<T> {
+public class EJBUser<T> implements EJBUserLocal {
 
     private Class<T> entityClass;
     
@@ -24,6 +31,7 @@ public class EJBUser<T> {
     private EntityManager em;
 
 
+    @Override
     public void createUser(User user) throws CreateException {
         try{
             em.persist(user);
@@ -32,6 +40,7 @@ public class EJBUser<T> {
         }
     }
 
+    @Override
     public void editUser(User user) throws EdittingException {
        
         try{
@@ -43,6 +52,7 @@ public class EJBUser<T> {
         
     }
 
+    @Override
     public void removeUser(User user) throws DeleteException{
         try{em.remove(em.merge(user));
         }catch(Exception e){
@@ -51,6 +61,7 @@ public class EJBUser<T> {
         }
     }
 
+    @Override
     public User find(Long id) throws UserNotFoundException{
         try{
             return em.find(User.class, id);
@@ -59,19 +70,41 @@ public class EJBUser<T> {
         }
     }
 
+    @Override
     public User findAccountByLogin(String login) throws UserNotFoundException {
         try {
-            return em.find(User.class, login);
+            return (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
         }catch(Exception e){
             throw new UserNotFoundException(e.getMessage());
         }
     }
+    @Override
     public List<User> findAllDeliveryAccounts() {
         return em.createNamedQuery("findAllDeliveryAccounts").getResultList();
     }
     
+    @Override
     public List<User> findAll() {
         return em.createNamedQuery("findAll").getResultList();
+    }
+    
+    @Override
+    public User forgottenpasswd(String email){
+        //ENVIAR EL EMAIL Y TAL
+    }
+    
+    @Override
+    public User editPasswd(UserPasswd user){
+        User olduser = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
+        if(user.getOldpassword().equals(olduser.getPassword())){
+            Date date = new Date(); 
+            user.setLastPasswordChange(date);
+        Object lala = em.createNamedQuery("editPasswd")
+                .setParameter("login", user.getLogin()).setParameter("data", user).getSingleResult();
+        }else{
+            //ERROR
+        }
+    
     }
 /*
     public List<T> findRange(int[] range) {

@@ -5,6 +5,10 @@
  */
 package service;
 
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.EdittingException;
+import exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import messages.UserPasswd;
 import routeappjpa.User;
 
 /**
@@ -47,27 +52,69 @@ public class UserFacadeREST {
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML})
     public void edit(@PathParam("id") Long id, User entity) {
-        ejb.editUser(entity);
+        try {
+            ejb.editUser(entity);
+        } catch (EdittingException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        }
     }
 
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
-        ejb.removeUser(ejb.find(id));
+        try {
+            try {
+                ejb.removeUser(ejb.find(id));
+            } catch (DeleteException ex) {
+                Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            }
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        }
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML})
     public User find(@PathParam("id") Long id) {
-        return ejb.find(id);
+        try {
+            return ejb.find(id);
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            return null;
+        }
     }
     
     @GET
-    @Path("{login}")
+    @Path("forgottenpasswd/{email}")
+    @Produces({MediaType.APPLICATION_XML})
+    public User forgottenpasswd(@PathParam("email") String email) {
+        
+    }
+    
+    @POST
+    @Path("editPasswd")
+    @Produces({MediaType.APPLICATION_XML})
+    public User editPasswd(UserPasswd u) {
+        return ejb.editPasswd(u);
+    }
+    @GET
+    @Path("login/{login}")
     @Produces({MediaType.APPLICATION_XML})
     public User findAccountByLogin(@PathParam("login") String login) {
-        return ejb.findAccountByLogin(login);
+        try {
+            return ejb.findAccountByLogin(login);
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            return null;
+        }
+    }
+    
+    @GET
+    @Path("deliveryAccounts")
+    @Produces({MediaType.APPLICATION_XML})
+    public List<User> findAllDeliveryAccounts() {
+            return ejb.findAllDeliveryAccounts();
     }
 
     @GET
