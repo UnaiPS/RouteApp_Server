@@ -6,6 +6,9 @@
 package service;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,53 +25,57 @@ import routeappjpa.User;
 
 /**
  *
- * @author Unai Pérez Sánchez
+ * @author Daira Eguzkiza
  */
 @Stateless
 @Path("routeappjpa.user")
-public class UserFacadeREST extends AbstractFacade<User> {
+public class UserFacadeREST {
 
-    @PersistenceContext(unitName = "RouteJPAPU")
-    private EntityManager em;
-
-    public UserFacadeREST() {
-        super(User.class);
-    }
-
+    @EJB
+    private EJBUserLocal ejb;
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML})
     public void create(User entity) {
-        super.create(entity);
+        try {
+            ejb.createUser(entity);
+        } catch (CreateException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        }
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML})
     public void edit(@PathParam("id") Long id, User entity) {
-        super.edit(entity);
+        ejb.editUser(entity);
     }
 
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
-        super.remove(super.find(id));
+        ejb.removeUser(ejb.find(id));
     }
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public User find(@PathParam("id") Long id) {
-        return super.find(id);
+        return ejb.find(id);
+    }
+    
+    @GET
+    @Path("{login}")
+    @Produces({MediaType.APPLICATION_XML})
+    public User findAccountByLogin(@PathParam("login") String login) {
+        return ejb.findAccountByLogin(login);
     }
 
     @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public List<User> findAll() {
-        return super.findAll();
+        return ejb.findAll();
     }
-
+/*
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -82,10 +89,6 @@ public class UserFacadeREST extends AbstractFacade<User> {
     public String countREST() {
         return String.valueOf(super.count());
     }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
-    
+*/
+   
 }

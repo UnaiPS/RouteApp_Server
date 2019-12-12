@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -27,6 +29,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="user", schema="routesdb")
+@NamedQueries({
+@NamedQuery(name="findAllDeliveryAccounts", query = "select u from User u where u.privilege=:2"),
+@NamedQuery(name="findAll", query="select u from User a ORDER BY a.id")
+})
 @XmlRootElement
 public class User implements Serializable{
         private static final long serialVersionUID=1L;
