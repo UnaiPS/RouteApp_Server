@@ -5,13 +5,18 @@
  */
 package service;
 
+import exception.CreateException;
+import exception.DeleteException;
+import exception.FindException;
+import exception.UpdateException;
+import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -19,73 +24,102 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import routeappjpa.Coordinate;
+import routeappjpa.Coordinate_Route;
+import routeappjpa.Direction;
+import routeappjpa.Type;
 
 /**
  *
- * @author Unai Pérez Sánchez
+ * @author Jon Calvo Gaminde
  */
-@Stateless
 @Path("routeappjpa.coordinate")
-public class CoordinateFacadeREST extends AbstractFacade<Coordinate> {
-
-    @PersistenceContext(unitName = "RouteJPAPU")
-    private EntityManager em;
-
-    public CoordinateFacadeREST() {
-        super(Coordinate.class);
-    }
-
+public class CoordinateFacadeREST {
+    @EJB
+    private CoordinateManagerLocal ejb;
+    
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Coordinate entity) {
-        super.create(entity);
+    @Consumes({MediaType.APPLICATION_XML})
+    public void createWaypoint(Coordinate coordinate) {
+        try {
+            ejb.createCoordinate(coordinate);
+        } catch (CreateException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Long id, Coordinate entity) {
-        super.edit(entity);
+    @Consumes({MediaType.APPLICATION_XML})
+    public void edit(Coordinate coordinate) {
+        try {
+            ejb.updateCoordinate(coordinate);
+        } catch (UpdateException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
-        super.remove(super.find(id));
+        try {
+            ejb.removeCoordinate(id);
+        } catch (DeleteException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML})
     public Coordinate find(@PathParam("id") Long id) {
-        return super.find(id);
+        try {
+            return ejb.findCoordinate(id);
+        } catch (FindException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
 
     @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Coordinate> findAll() {
-        return super.findAll();
+    @Path("type/{type}")
+    @Produces({MediaType.APPLICATION_XML})
+    public List<Coordinate> findByType(@PathParam("type") Type type) {
+        try {
+            return ejb.findByType(type);
+        } catch (Exception e) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        
     }
-
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Coordinate> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
+    @POST
+    @Path("direction")
+    @Consumes({MediaType.APPLICATION_XML})
+    public void createDirection(Direction direction) {
+        try {
+            ejb.createDirecction(direction);
+        } catch (CreateException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    
+    @PUT
+    @Path("direction/visited")
+    @Consumes({MediaType.APPLICATION_XML})
+    public void markDestiationVisited(ArrayList<Object> luggage) {
+        try {
+            Coordinate_Route visited = (Coordinate_Route) luggage.get(0);
+            Coordinate gps = (Coordinate) luggage.get(1);
+            ejb.createCoordinate(gps);
+            visited.setVisited(ejb.getIdByData(gps));
+            ejb.updateCoordinateRoute(visited);
+        } catch (CreateException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
     }
     
 }
