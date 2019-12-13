@@ -8,6 +8,7 @@ package service;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.EdittingException;
+import exceptions.IncorrectPasswdException;
 import exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
@@ -86,18 +87,35 @@ public class UserFacadeREST {
     }
     
     @GET
+    @Path("{id}/{fullName}")
+    @Produces({MediaType.APPLICATION_XML})
+    public User find(@PathParam("id") Long id, @PathParam("fullName") String fullName) {
+    return ejb.prueba(id, fullName);
+
+    }
+    
+    @GET
     @Path("forgottenpasswd/{email}")
     @Produces({MediaType.APPLICATION_XML})
     public User forgottenpasswd(@PathParam("email") String email) {
-        
+        //TO BE IMPLEMENTED
+        return null;
     }
     
     @POST
     @Path("editPasswd")
     @Produces({MediaType.APPLICATION_XML})
     public User editPasswd(UserPasswd u) {
-        return ejb.editPasswd(u);
+        try {
+            return ejb.editPasswd(u);
+        } catch (IncorrectPasswdException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        } catch (EdittingException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        }
+        return null;
     }
+    
     @GET
     @Path("login/{login}")
     @Produces({MediaType.APPLICATION_XML})

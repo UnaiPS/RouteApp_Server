@@ -27,11 +27,14 @@ import javax.xml.bind.annotation.XmlRootElement;
         name="findAllDeliveryAccounts", 
         query = "SELECT u FROM User u WHERE u.privilege=routeappjpa.Privilege.USER"),
 @NamedQuery(name="findAll", query="select u from User u ORDER BY u.id"),
-@NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login"),
+@NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login")/*,
+// Input parameters can only be used in the WHERE clause or HAVING clause of a query 
+// así que búscate la vida!!!
 @NamedQuery(name="editPasswd", 
-        query="update User set u.fullName = :data.fullName, u.email = :data.email, "
+        query="update User u set u.fullName = :data.fullName, u.email = :data.email, "
                 + "u.password = :data.newpassword, u.lastPasswordChange = :data.lastPasswordChange"
-                + " from User u where u.login =:data.login ")
+                + " where u.login =:data.login")*/
+        , @NamedQuery(name="prueba", query="select u from User u where u.id=:id and u.fullName=:fullName")
 })
 @XmlRootElement
 public class User implements Serializable{
