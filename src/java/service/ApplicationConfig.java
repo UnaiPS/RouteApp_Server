@@ -32,6 +32,7 @@ public class ApplicationConfig extends Application {
     //Add all the REST
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(service.RouteFacadeREST.class);
+        resources.add(service.UserFacadeREST.class);
     }
     
 }

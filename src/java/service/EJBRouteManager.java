@@ -5,10 +5,10 @@
  */
 package service;
 
-import exception.CreateException;
-import exception.DeleteException;
-import exception.FindException;
-import exception.UpdateException;
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.FindException;
+import exceptions.EdittingException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,12 +37,12 @@ public class EJBRouteManager implements RouteManagerLocal{
     }
 
     @Override
-    public void updateRoute(Route route) throws UpdateException{
+    public void updateRoute(Route route) throws EdittingException{
         try{
             em.merge(route);
             em.flush();
         }catch(Exception e){
-            throw new UpdateException(e.getMessage());
+            throw new EdittingException(e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class EJBRouteManager implements RouteManagerLocal{
     @Override
     public List<Route> findByAssignedUser(Long userId) throws FindException{
         try {
-            return em.createNamedQuery("findByAssignedUser").setParameter("user", em.find(User.class, userId)).getResultList();
+            return em.createNamedQuery("findByAssignedUser").setParameter("assignedTo", em.find(User.class, userId)).getResultList();
         } catch (Exception e) {
             throw new FindException(e.getMessage());
         }

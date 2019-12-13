@@ -5,10 +5,10 @@
  */
 package service;
 
-import exception.CreateException;
-import exception.DeleteException;
-import exception.FindException;
-import exception.UpdateException;
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.FindException;
+import exceptions.EdittingException;
 import java.util.List;
 import javax.ejb.Local;
 import routeappjpa.Route;
@@ -21,7 +21,7 @@ import routeappjpa.Route;
 public interface RouteManagerLocal {
     public void createRoute(Route route) throws CreateException;
 
-    public void updateRoute(Route route) throws UpdateException;
+    public void updateRoute(Route route) throws EdittingException;
 
     public void removeRoute(Long routeId) throws DeleteException;
 

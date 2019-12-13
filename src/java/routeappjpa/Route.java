@@ -49,7 +49,6 @@ public class Route implements Serializable{
      * route
      */
     @OneToMany(mappedBy = "route")
-    @NotNull
     private Set<Coordinate_Route> coordinates;
     /**
      * The name of the route that the administrator assigned
