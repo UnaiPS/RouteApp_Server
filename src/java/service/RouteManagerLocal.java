@@ -10,13 +10,14 @@ import exception.DeleteException;
 import exception.FindException;
 import exception.UpdateException;
 import java.util.List;
+import javax.ejb.Local;
 import routeappjpa.Route;
-import routeappjpa.User;
 
 /**
  *
  * @author Unai Pérez Sánchez
  */
+@Local
 public interface RouteManagerLocal {
     public void createRoute(Route route) throws CreateException;
 
