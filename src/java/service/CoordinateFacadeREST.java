@@ -5,10 +5,10 @@
  */
 package service;
 
-import exception.CreateException;
-import exception.DeleteException;
-import exception.FindException;
-import exception.UpdateException;
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.FindException;
+import exceptions.UpdateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
+import routeappjpa.Luggage;
 import routeappjpa.Type;
 
 /**
@@ -85,21 +86,22 @@ public class CoordinateFacadeREST {
     @GET
     @Path("type/{type}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<Coordinate> findByType(@PathParam("type") Type type) {
+    public List<Coordinate> findByType(@PathParam("type") String type) {
+        List<Coordinate> coords=null;
         try {
-            return ejb.findByType(type);
+            coords = ejb.findByType(type);
         } catch (Exception e) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
-        
+        return coords;
     }
     @POST
     @Path("direction")
     @Consumes({MediaType.APPLICATION_XML})
     public void createDirection(Direction direction) {
         try {
-            ejb.createDirecction(direction);
+            ejb.createDirection(direction);
         } catch (CreateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
@@ -109,14 +111,15 @@ public class CoordinateFacadeREST {
     @PUT
     @Path("direction/visited")
     @Consumes({MediaType.APPLICATION_XML})
-    public void markDestiationVisited(ArrayList<Object> luggage) {
+    public void markDestinationVisited(Luggage luggage) {
         try {
-            Coordinate_Route visited = (Coordinate_Route) luggage.get(0);
-            Coordinate gps = (Coordinate) luggage.get(1);
+            ArrayList<Object> content = luggage.getLuggage();
+            Coordinate_Route visited = (Coordinate_Route) content.get(0);
+            Coordinate gps = (Coordinate) content.get(1);
             ejb.createCoordinate(gps);
             visited.setVisited(ejb.getIdByData(gps));
             ejb.updateCoordinateRoute(visited);
-        } catch (CreateException ex) {
+        } catch (CreateException | FindException | UpdateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }

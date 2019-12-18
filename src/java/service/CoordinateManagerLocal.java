@@ -5,10 +5,10 @@
  */
 package service;
 
-import exception.CreateException;
-import exception.DeleteException;
-import exception.FindException;
-import exception.UpdateException;
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.FindException;
+import exceptions.UpdateException;
 import java.util.List;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
@@ -28,7 +28,7 @@ public interface CoordinateManagerLocal {
 
     public Coordinate findCoordinate(Long id) throws FindException;
     
-    public List<Coordinate> findByType(Type type) throws FindException;
+    public List<Coordinate> findByType(String type) throws FindException;
     
     public void createDirection(Direction direction) throws CreateException;
 

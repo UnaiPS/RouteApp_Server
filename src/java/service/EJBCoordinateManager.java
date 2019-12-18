@@ -5,11 +5,12 @@
  */
 package service;
 
-import exception.CreateException;
-import exception.DeleteException;
-import exception.FindException;
-import exception.UpdateException;
+import exceptions.CreateException;
+import exceptions.DeleteException;
+import exceptions.FindException;
+import exceptions.UpdateException;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,7 +32,11 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     @Override
     public void createCoordinate(Coordinate coordinate) throws CreateException{
         try{
-            em.persist(coordinate);
+            try{
+                getIdByData(coordinate);
+            }catch(Exception e){
+             em.persist(coordinate);
+            }
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
@@ -68,13 +73,14 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     }
     
     @Override
-    public List<Coordinate> findByType(Type type) throws FindException{
+    public List<Coordinate> findByType(String type) throws FindException{
+        List<Coordinate> coords=null;
         try {
-            return em.createNamedQuery("findCoordinatesByType").setParameter("type", type).getResultList();
+            coords = em.createNamedQuery("findCoordinatesByType").setParameter("type",Type.valueOf(type)).getResultList();
         } catch (Exception e) {
             throw new FindException(e.getMessage());
         }
-        
+        return coords;
     }
     
     @Override
@@ -102,6 +108,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     @Override
     public void createDirection(Direction direction) throws CreateException {
         try{
+            createCoordinate(direction.getCoordinate());
             em.persist(direction);
         }catch(Exception e){
             throw new CreateException(e.getMessage());
