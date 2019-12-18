@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +49,7 @@ public class Route implements Serializable{
      * The coordinates of the route with the attributes of all the points of the 
      * route
      */
-    @OneToMany(mappedBy = "route")
+    @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
     private Set<Coordinate_Route> coordinates;
     /**
      * The name of the route that the administrator assigned
@@ -117,7 +118,7 @@ public class Route implements Serializable{
     /**
      * @return the coordinates
      */
-    @XmlTransient
+    
     public Set<Coordinate_Route> getCoordinates() {
         return coordinates;
     }

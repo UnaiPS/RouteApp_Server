@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,6 +36,7 @@ public class Coordinate_Route implements Serializable {
     /**
      * @return the route
      */
+    @XmlTransient
     public Route getRoute() {
         return route;
     }
@@ -92,7 +94,6 @@ public class Coordinate_Route implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 37 * hash + Objects.hashCode(this.id);
-        hash = 37 * hash + Objects.hashCode(this.route);
         hash = 37 * hash + Objects.hashCode(this.coordinate);
         hash = 37 * hash + Objects.hashCode(this.wayOrder);
         hash = 37 * hash + Objects.hashCode(this.visited);
