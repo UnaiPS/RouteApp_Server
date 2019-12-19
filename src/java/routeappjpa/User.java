@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,14 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
         name="findAllDeliveryAccounts", 
         query = "SELECT u FROM User u WHERE u.privilege=routeappjpa.Privilege.USER"),
 @NamedQuery(name="findAll", query="select u from User u ORDER BY u.id"),
-@NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login")/*,
-// Input parameters can only be used in the WHERE clause or HAVING clause of a query 
-// así que búscate la vida!!!
-@NamedQuery(name="editPasswd", 
-        query="update User u set u.fullName = :data.fullName, u.email = :data.email, "
-                + "u.password = :data.newpassword, u.lastPasswordChange = :data.lastPasswordChange"
-                + " where u.login =:data.login")*/
-        , @NamedQuery(name="prueba", query="select u from User u where u.id=:id and u.fullName=:fullName")
+@NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login"),
+@NamedQuery(name="prueba", query="select u from User u where u.id=:id and u.fullName=:fullName")
 })
 @XmlRootElement
 public class User implements Serializable{
@@ -43,6 +38,7 @@ public class User implements Serializable{
         @Id
         @GeneratedValue(strategy=GenerationType.AUTO)
         private Long id;
+        @Column(unique=true)
         private String login;
         private String fullName;
         private String email;

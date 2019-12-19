@@ -5,6 +5,7 @@
  */
 package service;
 
+import exceptions.BadPasswordException;
 import exceptions.DeleteException;
 import exceptions.EdittingException;
 import exceptions.CreateException;
@@ -25,7 +26,7 @@ public interface EJBUserLocal {
     public void createUser(User user) throws CreateException;
     
     public void editUser(User user) throws EdittingException;
-    public void removeUser(User user) throws DeleteException;
+    public void removeUser(Long id) throws DeleteException;
     public User find(Long id) throws UserNotFoundException;
     public User findAccountByLogin(String login) throws UserNotFoundException;
     public List<User> findAllDeliveryAccounts();
@@ -33,4 +34,5 @@ public interface EJBUserLocal {
     public int forgottenpasswd(String email) throws EmailException;
     public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException;
     public User prueba(Long id, String fullName);
+    public User login(User user) throws BadPasswordException, UserNotFoundException;
 }
