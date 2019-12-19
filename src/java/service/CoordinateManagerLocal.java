@@ -35,4 +35,6 @@ public interface CoordinateManagerLocal {
     public Long getIdByData(Coordinate coordinate) throws FindException;
 
     public void updateCoordinateRoute(Coordinate_Route visited) throws UpdateException;
+    
+    public List<Direction> findDirectionsByType(String type) throws FindException;
 }

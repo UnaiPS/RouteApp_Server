@@ -20,10 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name="coordinate", schema="routesdb")
 @NamedQueries({
     @NamedQuery(name="findCoordinatesByType",
-            query="SELECT c FROM Coordinate c where c.type = :type"
+            query="SELECT c FROM Coordinate c WHERE c.type = :type"
     ),
     @NamedQuery(name="getCoordinateIdByData",
-            query="SELECT c.id FROM Coordinate c where c.latitude = :latitude AND c.longitude = :longitude AND c.type = :type"
+            query="SELECT c.id FROM Coordinate c WHERE c.latitude = :latitude AND c.longitude = :longitude AND c.type = :type"
     )
 })
 @XmlRootElement

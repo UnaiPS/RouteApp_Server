@@ -6,15 +6,12 @@
 package service;
 
 import exceptions.CreateException;
-import exceptions.DeleteException;
 import exceptions.FindException;
 import exceptions.UpdateException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
@@ -26,8 +23,6 @@ import javax.ws.rs.core.MediaType;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
-import routeappjpa.Luggage;
-import routeappjpa.Type;
 
 /**
  *
@@ -40,7 +35,7 @@ public class CoordinateFacadeREST {
     
     @POST
     @Consumes({MediaType.APPLICATION_XML})
-    public void createWaypoint(Coordinate coordinate) {
+    public void createCoordinate(Coordinate coordinate) {
         try {
             ejb.createCoordinate(coordinate);
         } catch (CreateException ex) {
@@ -49,7 +44,7 @@ public class CoordinateFacadeREST {
         }
     }
 
-    @PUT
+    /*@PUT
     @Consumes({MediaType.APPLICATION_XML})
     public void edit(Coordinate coordinate) {
         try {
@@ -58,9 +53,9 @@ public class CoordinateFacadeREST {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
-    }
+    }*/
 
-    @DELETE
+    /*@DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
         try {
@@ -69,9 +64,9 @@ public class CoordinateFacadeREST {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
-    }
+    }*/
 
-    @GET
+    /*@GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML})
     public Coordinate find(@PathParam("id") Long id) {
@@ -81,7 +76,7 @@ public class CoordinateFacadeREST {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
-    }
+    }*/
 
     @GET
     @Path("type/{type}")
@@ -96,6 +91,21 @@ public class CoordinateFacadeREST {
         }
         return coords;
     }
+	
+	@GET
+    @Path("direction/{type}")
+    @Produces({MediaType.APPLICATION_XML})
+    public List<Direction> findDirectionsByType(@PathParam("type") String type) {
+        List<Direction> directions = null;
+		try {
+            ejb.findDirectionsByType(type);
+        } catch (FindException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
+		return directions;
+    }
+	
     @POST
     @Path("direction")
     @Consumes({MediaType.APPLICATION_XML})
@@ -109,20 +119,16 @@ public class CoordinateFacadeREST {
     }
     
     @PUT
-    @Path("direction/visited")
+    @Path("direction/visited/{id}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void markDestinationVisited(Luggage luggage) {
+    public void markDestinationVisited(@PathParam("id") Long gpsId, Coordinate_Route visited) {
         try {
-            ArrayList<Object> content = luggage.getLuggage();
-            Coordinate_Route visited = (Coordinate_Route) content.get(0);
-            Coordinate gps = (Coordinate) content.get(1);
-            ejb.createCoordinate(gps);
-            visited.setVisited(ejb.getIdByData(gps));
+            visited.setVisited(gpsId);
             ejb.updateCoordinateRoute(visited);
-        } catch (CreateException | FindException | UpdateException ex) {
+        } catch (UpdateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
-    
+	
 }

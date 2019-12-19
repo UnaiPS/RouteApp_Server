@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
@@ -32,11 +33,9 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     @Override
     public void createCoordinate(Coordinate coordinate) throws CreateException{
         try{
-            try{
-                getIdByData(coordinate);
-            }catch(Exception e){
-             em.persist(coordinate);
-            }
+            if (getIdByData(coordinate) == null) {
+				em.persist(coordinate);
+			}
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
@@ -90,9 +89,11 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
                     .setParameter("latitude", coordinate.getLatitude())
                     .setParameter("longitude", coordinate.getLongitude())
                     .setParameter("type", coordinate.getType()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } catch (Exception e) {
-            throw new FindException(e.getMessage());
-        }
+			throw new FindException(e.getMessage());
+		}
     }
 
     @Override
@@ -115,6 +116,15 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         }
     }
 
-    
+    @Override
+    public List<Direction> findDirectionsByType(String type) throws FindException{
+        List<Direction> directions = null;
+        try {
+            directions = em.createNamedQuery("findDirectionsByType").setParameter("type",Type.valueOf(type)).getResultList();
+        } catch (Exception e) {
+            throw new FindException(e.getMessage());
+        }
+        return directions;
+    }
     
 }
