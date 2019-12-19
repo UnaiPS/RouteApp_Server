@@ -5,9 +5,11 @@
  */
 package service;
 
+import exceptions.BadPasswordException;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.EdittingException;
+import exceptions.EmailException;
 import exceptions.IncorrectPasswdException;
 import exceptions.UserNotFoundException;
 import java.util.List;
@@ -39,6 +41,7 @@ public class UserFacadeREST {
 
     @EJB
     private EJBUserLocal ejb;
+    
     @POST
     @Consumes({MediaType.APPLICATION_XML})
     public void create(User entity) {
@@ -52,24 +55,29 @@ public class UserFacadeREST {
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void edit(@PathParam("id") Long id, User entity) {
+    public void edit(@PathParam("id") Long id, User entity) throws UserNotFoundException{
         try {
             ejb.editUser(entity);
         } catch (EdittingException ex) {
             Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
         }
     }
+    
+    
+    @POST
+    @Path("login")
+    @Consumes({MediaType.APPLICATION_XML})
+    public User login(User user) throws BadPasswordException, UserNotFoundException {
+                return ejb.login(user);
+    }
+
 
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") Long id) {
         try {
-            try {
-                ejb.removeUser(ejb.find(id));
-            } catch (DeleteException ex) {
-                Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
-            }
-        } catch (UserNotFoundException ex) {
+            ejb.removeUser(id);
+        } catch (DeleteException ex) {
             Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
         }
     }
@@ -94,15 +102,22 @@ public class UserFacadeREST {
 
     }
     
+    
     @GET
     @Path("forgottenpasswd/{email}")
     @Produces({MediaType.APPLICATION_XML})
-    public User forgottenpasswd(@PathParam("email") String email) {
-        //TO BE IMPLEMENTED
-        return null;
+    public int forgottenpasswd(@PathParam("email") String email) {
+        try {
+            return ejb.forgottenpasswd(email);
+        } catch (EmailException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        }
+        return 1;
     }
     
-    @POST
+    
+    
+    @PUT
     @Path("editPasswd")
     @Produces({MediaType.APPLICATION_XML})
     public User editPasswd(UserPasswd u) {
@@ -140,20 +155,5 @@ public class UserFacadeREST {
     public List<User> findAll() {
         return ejb.findAll();
     }
-/*
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<User> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    }
-*/
    
 }

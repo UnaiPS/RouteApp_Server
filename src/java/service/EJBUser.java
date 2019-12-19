@@ -5,6 +5,7 @@
  */
 package service;
 
+import exceptions.BadPasswordException;
 import exceptions.EmailException;
 import exceptions.IncorrectPasswdException;
 import exceptions.DeleteException;
@@ -21,6 +22,8 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import messages.UserPasswd;
+import routeappjpa.Privilege;
+import routeappjpa.Status;
 import routeappjpa.User;
 
 /**
@@ -52,19 +55,26 @@ public class EJBUser<T> implements EJBUserLocal {
 
     @Override
     public void editUser(User user) throws EdittingException {
-       
-        try{
+        try{/*
+            User u = new User();
+            u=(User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
+            user.setPassword(u.getPassword());
+            user.setPrivilege(u.getPrivilege());
+            user.setStatus(u.getStatus());
+            user.setLastAccess(u.getLastAccess());
+            user.setLastPasswordChange(u.getLastPasswordChange());*/
             em.merge(user);
             em.flush();
         }catch(Exception e){
             throw new EdittingException(e.getMessage());
         }
-        
     }
 
     @Override
-    public void removeUser(User user) throws DeleteException{
-        try{em.remove(em.merge(user));
+    public void removeUser(Long id) throws DeleteException{
+        User u = new User();
+            u = em.find(User.class, id);
+        try{em.remove(em.merge(u));
         }catch(Exception e){
             throw new DeleteException(e.getMessage());
 
@@ -78,6 +88,32 @@ public class EJBUser<T> implements EJBUserLocal {
         }catch(Exception e){
             throw new UserNotFoundException(e.getMessage());
         }
+    }
+    
+    
+    @Override
+    public User login(User user) throws BadPasswordException, UserNotFoundException{
+        User u = new User();  
+        try{
+         u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
+         u.setLastAccess(new Date());
+          if(u.getPassword().equals(user.getPassword())){
+              user.setEmail(u.getEmail());
+              user.setFullName(u.getFullName());
+              user.setId(u.getId());
+              user.setLastAccess(u.getLastAccess());
+              user.setLastPasswordChange(u.getLastPasswordChange());
+              user.setLogin(u.getLogin());
+              user.setPrivilege(u.getPrivilege());
+              user.setStatus(u.getStatus());
+              user.setPassword(null);
+              return user;
+          }else{
+              throw new BadPasswordException("The data you've entered isn't correct.");
+          }
+        }catch(Exception e){
+              throw new UserNotFoundException(e.getMessage());
+          }
     }
 
     @Override
@@ -98,6 +134,7 @@ public class EJBUser<T> implements EJBUserLocal {
         return em.createNamedQuery("findAll").getResultList();
     }
     
+    
     @Override
     public int forgottenpasswd(String email) throws EmailException{
         try {
@@ -107,6 +144,7 @@ public class EJBUser<T> implements EJBUserLocal {
         }
         return 1;
     }
+    
     
     @Override
     public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException{
@@ -124,7 +162,6 @@ public class EJBUser<T> implements EJBUserLocal {
                 throw new EdittingException(e.getMessage());
             }
             }else{
-            //ERROR 
             throw new  IncorrectPasswdException();
         }
     }
