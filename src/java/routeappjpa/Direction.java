@@ -18,6 +18,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name="direction", schema="routesdb")
+@NamedQueries({
+    @NamedQuery(name="findDirectionsByType",
+            query="SELECT d FROM Direction d WHERE d.coordinate.type = :type"
+    )
+})
 @XmlRootElement
 public class Direction implements Serializable {
     private static final long serialVersionUID = 1L;

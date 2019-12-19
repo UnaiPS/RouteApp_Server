@@ -7,13 +7,24 @@ package exceptions;
 
 /**
  *
- * @author Daira Eguzkiza
+ * @author Unai Pérez Sánchez
  */
-//ESTO HAY QUE QUITARLO DE AQUÍ Y METERLO EN OTRO PAQUETE
 public class CreateException extends Exception {
 
-    public CreateException(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Creates a new instance of <code>CreateException</code> without detail
+     * message.
+     */
+    public CreateException() {
     }
-    
+
+    /**
+     * Constructs an instance of <code>CreateException</code> with the specified
+     * detail message.
+     *
+     * @param msg the detail message.
+     */
+    public CreateException(String msg) {
+        super(msg);
+    }
 }

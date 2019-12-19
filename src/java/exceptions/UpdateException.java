@@ -9,22 +9,22 @@ package exceptions;
  *
  * @author Unai Pérez Sánchez
  */
-public class DeleteException extends Exception {
+public class UpdateException extends Exception {
 
     /**
-     * Creates a new instance of <code>DeleteException</code> without detail
+     * Creates a new instance of <code>UpdateException</code> without detail
      * message.
      */
-    public DeleteException() {
+    public UpdateException() {
     }
 
     /**
-     * Constructs an instance of <code>DeleteException</code> with the specified
+     * Constructs an instance of <code>UpdateException</code> with the specified
      * detail message.
      *
      * @param msg the detail message.
      */
-    public DeleteException(String msg) {
+    public UpdateException(String msg) {
         super(msg);
     }
 }
