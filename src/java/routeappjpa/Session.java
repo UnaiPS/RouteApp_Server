@@ -18,6 +18,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name="session", schema="routesdb")
+@NamedQueries({
+    @NamedQuery(name="getSessionCode",
+            query="SELECT s FROM Session s WHERE s.logged = :logged"
+    ),
+    @NamedQuery(name="findSessionByCode",
+            query="SELECT s FROM Session s WHERE s.code = :code"
+    )
+})
 @XmlRootElement
 public class Session implements Serializable {
     private static final long serialVersionUID = 1L;
