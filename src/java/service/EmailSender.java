@@ -5,10 +5,12 @@
  */
 package service;
 
+import emailencoding.EncoderDecoderEmail;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Authenticator;
@@ -22,32 +24,47 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import org.apache.commons.text.StringEscapeUtils;
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class EmailSender {
-     // Server mail user & pass
-    private static String user = null;
-    private static String pass = null;
-    private String sendTo;
     // DNS Host + SMTP Port
-    private static String smtp_host = null;
-    private static int smtp_port = 0;
+    private String smtp_host = null;
+    private int smtp_port = 0;
 
     // Default DNS Host + port
     private static final String DEFAULT_SMTP_HOST = "posta.tartanga.eus";
     private static final int DEFAULT_SMTP_PORT = 25;
+        
+    public EmailSender(String host, String port) {
+        this.smtp_host = (host == null ? DEFAULT_SMTP_HOST : host);
+        this.smtp_port = (port == null ? DEFAULT_SMTP_PORT : Integer.parseInt(port));
+    }
     
-    public static int sendEmail(String email) throws MessagingException{
+    public EmailSender() {
+       
+    }
+    /**
+     * Sends the email with all the data entered
+     * @param email the email we want to send the email to
+     * @param contrasena the new password we want to send the user.
+     * @return the integer 200 if everything's gone right
+     * @throws MessagingException 
+     */
+    public int sendEmail(String email, String contrasena) throws MessagingException{
         try{
+            ResourceBundle prop = ResourceBundle.getBundle("emailencoding.prop");
+            String clave = prop.getString("clave");
+            EncoderDecoderEmail decoder = new EncoderDecoderEmail();
+            String user=decoder.descifrarTexto(clave, 1);
+            String pass=decoder.descifrarTexto(clave, 2);
          // Mail properties
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", true);
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.smtp.host", smtp_host);
-        properties.put("mail.smtp.port", smtp_port);
+	properties.put("mail.smtp.port", smtp_port);
         properties.put("mail.smtp.ssl.trust", smtp_host);
         properties.put("mail.imap.partialfetch", false);
 
@@ -70,7 +87,8 @@ public class EmailSender {
 
         // A message part (the message, but can be also a File, etc...)
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent("aquí viene el texto para decirle lo de la contraseña", "text/html");
+        String cuerpo = EmailSender.emailBody(contrasena);
+        mimeBodyPart.setContent(cuerpo, "text/html");
         multipart.addBodyPart(mimeBodyPart);
 
         // Adding up the parts to the MIME message
@@ -79,12 +97,18 @@ public class EmailSender {
         // And here it goes...
         Transport.send(message);
         }catch(Exception e){
-            return 2;
+            return 500;
         }
-        return 1;
+        return 200;
     }
     
-    public String emailBody(String email){
+    /**
+     * Creates the html we want to send the user with the password where it's 
+     * supposed to be.
+     * @param newPass the new password.
+     * @return a String with the html content.
+     */
+    public static String emailBody(String newPass){
                 StringBuilder contentBuilder = new StringBuilder();
             try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\mediafiles\\email.html"))) 
             {
@@ -100,7 +124,7 @@ public class EmailSender {
                 e.printStackTrace();
             }
              String emailhtml = contentBuilder.toString();
-             emailhtml = emailhtml.replace("$Model.email", email);
+             emailhtml = emailhtml.replace("$Model.newPassword", newPass);
              return emailhtml;
     }
     
