@@ -7,11 +7,11 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class BadPasswordException extends Exception {
-
-    public BadPasswordException(String the_data_youve_entered_doesnt_match) {
+    public BadPasswordException(String msg){
+        super(msg);
     }
-    
 }
+

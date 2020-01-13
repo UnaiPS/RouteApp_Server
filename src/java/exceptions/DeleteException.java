@@ -7,12 +7,10 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class DeleteException extends Exception {
-
-    public DeleteException(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public DeleteException(String msg){
+        super(msg);
     }
-    
 }

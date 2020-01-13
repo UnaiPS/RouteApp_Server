@@ -7,8 +7,10 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class IncorrectPasswdException extends Exception {
-    
+    public IncorrectPasswdException(String msg){
+        super(msg);
+    }
 }

@@ -7,11 +7,10 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class UserNotFoundException extends Exception {
-
-    public UserNotFoundException(String message) {
+    public UserNotFoundException(String msg){
+        super(msg);
     }
-    
 }

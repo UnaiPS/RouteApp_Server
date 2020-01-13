@@ -7,11 +7,10 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class EmailException extends Exception {
-
-    public EmailException(String message) {
+    public EmailException(String msg){
+        super(msg);
     }
-    
 }

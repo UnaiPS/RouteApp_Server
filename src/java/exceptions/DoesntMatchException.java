@@ -9,10 +9,9 @@ package exceptions;
  *
  * @author Daira Eguzkiza
  */
-
-
-public class CreateException extends Exception {
-    public CreateException(String msg){
+public class DoesntMatchException extends Exception {
+    public DoesntMatchException(String msg){
         super(msg);
     }
 }
+

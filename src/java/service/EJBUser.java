@@ -11,8 +11,11 @@ import exceptions.IncorrectPasswdException;
 import exceptions.DeleteException;
 import exceptions.EdittingException;
 import exceptions.CreateException;
+import exceptions.DoesntMatchException;
 import exceptions.UserNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,14 +58,7 @@ public class EJBUser<T> implements EJBUserLocal {
 
     @Override
     public void editUser(User user) throws EdittingException {
-        try{/*
-            User u = new User();
-            u=(User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
-            user.setPassword(u.getPassword());
-            user.setPrivilege(u.getPrivilege());
-            user.setStatus(u.getStatus());
-            user.setLastAccess(u.getLastAccess());
-            user.setLastPasswordChange(u.getLastPasswordChange());*/
+        try{
             em.merge(user);
             em.flush();
         }catch(Exception e){
@@ -126,7 +122,22 @@ public class EJBUser<T> implements EJBUserLocal {
     }
     @Override
     public List<User> findAllDeliveryAccounts() {
-        return em.createNamedQuery("findAllDeliveryAccounts").getResultList();
+         List<User> users = em.createNamedQuery("findAllDeliveryAccounts").getResultList();
+         List<User> userReturn = new ArrayList<User>();
+         for(User u: users){
+             User user = new User();
+             user.setEmail(u.getEmail());
+             user.setFullName(u.getFullName());
+             user.setId(u.getId());
+             user.setLastAccess(u.getLastAccess());
+             user.setLastPasswordChange(u.getLastPasswordChange());
+             user.setLogin(u.getLogin());
+             user.setPassword(null);
+             user.setPrivilege(u.getPrivilege());
+             user.setStatus(u.getStatus());
+             userReturn.add(user);
+         }
+         return userReturn;
     }
     
     @Override
@@ -136,9 +147,23 @@ public class EJBUser<T> implements EJBUserLocal {
     
     
     @Override
-    public int forgottenpasswd(String email) throws EmailException{
+    public int forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
         try {
-            EmailSender.sendEmail(email);
+            User olduser = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
+            if(olduser.getEmail().equals(email)){
+                EmailSender e = new EmailSender("smtp.gmail.com", "587");
+                //Aquí vendría todo lo de generar la nueva contraseña y meterla en la base de datos.
+                String nuevaContra = createCode();
+                UserPasswd change = new UserPasswd();
+                change.setLogin(login);
+                change.setOldpassword(olduser.getPassword());
+                change.setNewpassword(nuevaContra);
+                editPasswd(change);
+                e.sendEmail(email, nuevaContra);
+            }else{
+                throw new DoesntMatchException("The login doesn't match with the email.");
+            }
+           
         } catch (Exception ex) {
             throw new EmailException(ex.getMessage());
         }
@@ -162,7 +187,25 @@ public class EJBUser<T> implements EJBUserLocal {
                 throw new EdittingException(e.getMessage());
             }
             }else{
-            throw new  IncorrectPasswdException();
+            throw new IncorrectPasswdException("The password is not correct.");
         }
+    }
+    
+        private static String createCode() {
+        String code = "";
+        for (int i = 0; i < 10; i++) {
+            if (Math.random() < 0.5) {
+                int num = (int) Math.floor(Math.random()*(91-65)+65);
+                if (Math.random() < 0.5) {
+                    num += 32;
+                }
+                char letter = (char) num;
+                code = code + letter;
+            } else {
+                int num = (int) Math.floor(Math.random()*10);
+                code = code + num;
+            }
+        }
+        return code;
     }
 }
