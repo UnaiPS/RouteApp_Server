@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This entity defines a user of the application with its respective data.
- * @author Daira Eguzkiza Lamelas
+ * @author Daira Eguzkiza
  */
 
 @Entity

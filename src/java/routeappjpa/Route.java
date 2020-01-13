@@ -60,7 +60,7 @@ public class Route implements Serializable{
      * The information about the administrator that created the route
      */
     @ManyToOne
-    @NotNull
+    //@NotNull
     private User createdBy;
     /**
      * The delivery man/technician assigned to the route
@@ -78,27 +78,27 @@ public class Route implements Serializable{
     /**
      * If the route has been started or not
      */
-    @NotNull
+    //@NotNull
     private Boolean started;
     /**
      * If the Route has been ended or not
      */
-    @NotNull
+    //@NotNull
     private Boolean ended;
     /**
      * The mode of the route (FASTEST,SHORTEST,BALANCED)
      */
-    @NotNull
+    //@NotNull
     private Mode mode;
     /**
      * The type of the vehicle that the driver is going to use
      */
-    @NotNull
+    //@NotNull
     private TransportMode transportMode;
     /**
      * When is creating the route if takes into account the traffic at the moment
      */
-    @NotNull
+    //@NotNull
     private TrafficMode trafficMode;
 
     /**

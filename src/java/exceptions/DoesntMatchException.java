@@ -9,8 +9,9 @@ package exceptions;
  *
  * @author Daira Eguzkiza
  */
-public class UserNotFoundException extends Exception {
-    public UserNotFoundException(String msg){
+public class DoesntMatchException extends Exception {
+    public DoesntMatchException(String msg){
         super(msg);
     }
 }
+

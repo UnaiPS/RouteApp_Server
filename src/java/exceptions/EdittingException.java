@@ -7,11 +7,10 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author Daira Eguzkiza
  */
 public class EdittingException extends Exception {
-
-    public EdittingException(String message) {
+    public EdittingException(String msg){
+        super(msg);
     }
-    
 }

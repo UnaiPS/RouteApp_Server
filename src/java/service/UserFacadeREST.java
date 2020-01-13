@@ -8,6 +8,7 @@ package service;
 import exceptions.BadPasswordException;
 import exceptions.CreateException;
 import exceptions.DeleteException;
+import exceptions.DoesntMatchException;
 import exceptions.EdittingException;
 import exceptions.EmailException;
 import exceptions.IncorrectPasswdException;
@@ -104,13 +105,15 @@ public class UserFacadeREST {
     
     
     @GET
-    @Path("forgottenpasswd/{email}")
+    @Path("forgottenpasswd/{email}/{login}")
     @Produces({MediaType.APPLICATION_XML})
-    public int forgottenpasswd(@PathParam("email") String email) {
+    public int forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) {
         try {
-            return ejb.forgottenpasswd(email);
+            return ejb.forgottenpasswd(email, login);
         } catch (EmailException ex) {
             Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+        } catch (DoesntMatchException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 1;
     }
@@ -147,7 +150,8 @@ public class UserFacadeREST {
     @Path("deliveryAccounts")
     @Produces({MediaType.APPLICATION_XML})
     public List<User> findAllDeliveryAccounts() {
-            return ejb.findAllDeliveryAccounts();
+        List<User> users = ejb.findAllDeliveryAccounts();
+            return users;
     }
 
     @GET

@@ -9,6 +9,7 @@ import exceptions.BadPasswordException;
 import exceptions.DeleteException;
 import exceptions.EdittingException;
 import exceptions.CreateException;
+import exceptions.DoesntMatchException;
 import exceptions.EmailException;
 import exceptions.IncorrectPasswdException;
 import exceptions.UserNotFoundException;
@@ -31,7 +32,7 @@ public interface EJBUserLocal {
     public User findAccountByLogin(String login) throws UserNotFoundException;
     public List<User> findAllDeliveryAccounts();
     public List<User> findAll();
-    public int forgottenpasswd(String email) throws EmailException;
+    public int forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException;
     public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException;
     public User prueba(Long id, String fullName);
     public User login(User user) throws BadPasswordException, UserNotFoundException;
