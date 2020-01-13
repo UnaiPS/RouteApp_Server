@@ -11,6 +11,7 @@ import exceptions.FindException;
 import exceptions.UpdateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;
@@ -58,9 +59,18 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     }
 
     @Override
-    public void removeCoordinate(Long coordinateId) throws DeleteException{
+    public void removeCoordinate(Coordinate coordinate) throws DeleteException{
         try {
-            em.remove(em.merge(findCoordinate(coordinateId)));
+            if (!coordinate.getType().equals(Type.WAYPOINT)) {
+                try {
+                    Direction direction = (Direction) em.createNamedQuery("findDirectionByCoordinate").setParameter("coordinate",coordinate).getSingleResult();
+                    em.remove(em.merge(direction));
+
+                } catch (NoResultException e) {
+                    Logger.getLogger(EJBCoordinateManager.class.getName()).log(Level.SEVERE, "No direction exists for this coordinate: " + coordinate.toString());
+                }
+            }
+            em.remove(em.merge(coordinate));
         } catch (Exception e) {
             throw new DeleteException(e.getMessage());
         }
@@ -145,5 +155,21 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
             throw new CreateException(e.getMessage());
         }
     }
-    
+
+    @Override
+    public void removeCoordinateRoute(Coordinate_Route segment) throws DeleteException {
+        try {
+            Coordinate coordinate = segment.getCoordinate();
+            em.remove(em.merge(segment));
+            
+
+            try {
+                em.createNamedQuery("findCoordinateRoutesByCoordinateId").setParameter("id",coordinate.getId()).getSingleResult();
+            } catch (NoResultException e) {
+                removeCoordinate(coordinate);
+            }
+        } catch (Exception e) {
+            throw new DeleteException(e.getMessage());
+        }
+    }
 }

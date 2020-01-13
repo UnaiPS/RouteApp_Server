@@ -24,7 +24,7 @@ public interface CoordinateManagerLocal {
 
     public void updateCoordinate(Coordinate coordinate) throws UpdateException;
 
-    public void removeCoordinate(Long coordinateId) throws DeleteException;
+    public void removeCoordinate(Coordinate coordinate) throws DeleteException;
 
     public Coordinate findCoordinate(Long id) throws FindException;
     
@@ -39,4 +39,6 @@ public interface CoordinateManagerLocal {
     public List<Direction> findDirectionsByType(String type) throws FindException;
 
     public void createCoordinateRoute(Coordinate_Route segment) throws CreateException;
+
+    public void removeCoordinateRoute(Coordinate_Route segment) throws DeleteException;
 }

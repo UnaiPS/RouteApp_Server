@@ -72,7 +72,12 @@ public class EJBRouteManager implements RouteManagerLocal{
     @Override
     public void removeRoute(Long routeId) throws DeleteException{
         try {
-            em.remove(em.merge(findRoute(routeId)));
+            Route route = findRoute(routeId);
+            for(Coordinate_Route segment : route.getCoordinates()) {
+                ejbCoordinate.removeCoordinateRoute(segment);
+            }
+            
+            em.remove(route);
         } catch (Exception e) {
             throw new DeleteException(e.getMessage());
         }

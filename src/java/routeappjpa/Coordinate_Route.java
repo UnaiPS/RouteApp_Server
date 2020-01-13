@@ -18,6 +18,11 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name="coordinate_route", schema="routesdb")
+@NamedQueries({
+    @NamedQuery(name="findCoordinateRoutesByCoordinateId",
+            query="SELECT cr FROM Coordinate_Route cr WHERE cr.id.coordinateId = :id"
+    )
+})
 @XmlRootElement
 public class Coordinate_Route implements Serializable {
     private static final long serialVersionUID = 1L;

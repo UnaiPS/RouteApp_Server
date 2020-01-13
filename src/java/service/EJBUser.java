@@ -48,6 +48,7 @@ public class EJBUser<T> implements EJBUserLocal {
     @Override
     public void createUser(User user) throws CreateException {
         try{
+            user.setPassword(Hasher.encrypt(new String (Decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))));
             em.persist(user);
         }catch(Exception e){
                 throw new CreateException(e.getMessage());
@@ -93,12 +94,11 @@ public class EJBUser<T> implements EJBUserLocal {
     @Override
     public User login(User user) throws BadPasswordException, UserNotFoundException{
         User u = new User();
-        Decrypt decrypt = new Decrypt();
         try{
          u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
          
          
-          if(Hasher.encrypt(new String (decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))).equals(u.getPassword())){
+          if(Hasher.encrypt(new String (Decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))).equals(u.getPassword())){
               user.setEmail(u.getEmail());
               user.setFullName(u.getFullName());
               user.setId(u.getId());

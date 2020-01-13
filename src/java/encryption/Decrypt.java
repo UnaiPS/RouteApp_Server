@@ -8,6 +8,7 @@ package encryption;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
 
@@ -16,8 +17,7 @@ import javax.crypto.Cipher;
  * @author Unai Pérez Sánchez
  */
 public class Decrypt {
-  private Logger LOGGER = Logger.getLogger(Decrypt.class.getName());
-    public byte[] descifrarTexto(byte[] mensaje) {
+    public static byte[] descifrarTexto(byte[] mensaje) {
         KeyReader rsa = new KeyReader();
         
         byte[] decodedMessage = null;
@@ -33,7 +33,7 @@ public class Decrypt {
                 cipher.init(Cipher.DECRYPT_MODE, privateKey);
                 decodedMessage = cipher.doFinal(mensaje);
         } catch (Exception e) {
-                LOGGER.severe(e.getLocalizedMessage());
+                Logger.getLogger(Decrypt.class.getName()).log(Level.SEVERE, null, e.getLocalizedMessage());
         }
         return decodedMessage;
     }
