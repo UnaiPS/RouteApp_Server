@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Coordinate_Route implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    private Coordinate_RouteId id;
+    private Coordinate_RouteId id = new Coordinate_RouteId();
     @MapsId("routeId")
     @ManyToOne
     private Route route;
@@ -46,6 +46,7 @@ public class Coordinate_Route implements Serializable {
      */
     public void setRoute(Route route) {
         this.route = route;
+
     }
 
     /**
@@ -88,6 +89,14 @@ public class Coordinate_Route implements Serializable {
      */
     public void setVisited(Long visited) {
         this.visited = visited;
+    }
+
+    public Coordinate_RouteId getId() {
+        return id;
+    }
+
+    public void setId(Coordinate_RouteId id) {
+        this.id = id;
     }
 
     @Override

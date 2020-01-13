@@ -13,8 +13,15 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import routeappjpa.Direction;
+import routeappjpa.FullRoute;
 import routeappjpa.Route;
 import routeappjpa.User;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import routeappjpa.Coordinate_Route;
 
 /**
  *
@@ -25,11 +32,27 @@ public class EJBRouteManager implements RouteManagerLocal{
 
     @PersistenceContext(unitName = "RouteJPAPU")
     private EntityManager em;
+    @EJB
+    private CoordinateManagerLocal ejbCoordinate;
 
     @Override
-    public void createRoute(Route route) throws CreateException{
+    public void createRoute(FullRoute fullRoute) throws CreateException{
         try{
+            Route route = fullRoute.getRoute();
+            Set<Direction> directions = fullRoute.getDirections();
+   
             em.persist(route);
+            
+            for(Coordinate_Route segment : fullRoute.getRoute().getCoordinates()) {
+                segment.setRoute(findRoute(route.getId()));
+
+                ejbCoordinate.createCoordinateRoute(segment);
+            }
+            
+            for (Direction direction : directions) {
+                ejbCoordinate.createDirection(direction);
+            }
+            
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }

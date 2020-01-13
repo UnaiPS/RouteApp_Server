@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name="findDirectionsByType",
             query="SELECT d FROM Direction d WHERE d.coordinate.type = :type"
+    ),
+    @NamedQuery(name="findDirectionByCoordinate",
+            query="SELECT d FROM Direction d WHERE d.coordinate = :coordinate"
     )
 })
 @XmlRootElement

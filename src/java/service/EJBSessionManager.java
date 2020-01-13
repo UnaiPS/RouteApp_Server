@@ -48,7 +48,7 @@ public class EJBSessionManager implements SessionManagerLocal{
                 } catch(Exception e) {
                     throw new DeleteException(e.getMessage());
                 }
-                throw new NoResultException("The user has been inactive for more than " + MINUTES + " minutes. Creating new Session.");
+                throw new NoResultException("The user has been inactive for " + MINUTES + " minutes. Creating new Session.");
             }
         } catch (NoResultException e) {
             session = new Session();
@@ -67,6 +67,7 @@ public class EJBSessionManager implements SessionManagerLocal{
     public User checkSession(String encryptSession) throws FindException {
         User user = null;
         try{
+            //TODO Encryptation
             String code = encryptSession.substring(0, 6);
             Long millis = Long.getLong(encryptSession.substring(6));
             Session session = (Session) em.createNamedQuery("findSessionByCode")
@@ -84,81 +85,6 @@ public class EJBSessionManager implements SessionManagerLocal{
         }
         return user;
     }
-
-    /*@Override
-    public void removeCoordinate(Long coordinateId) throws DeleteException{
-        try {
-            em.remove(em.merge(findCoordinate(coordinateId)));
-        } catch (Exception e) {
-            throw new DeleteException(e.getMessage());
-        }
-    }
-
-    @Override
-    public Coordinate findCoordinate(Long id) throws FindException{
-        try {
-            return em.find(Coordinate.class, id);
-        } catch (Exception e) {
-            throw new FindException(e.getMessage());
-        }
-        
-    }
-    
-    @Override
-    public List<Coordinate> findByType(String type) throws FindException{
-        List<Coordinate> coords=null;
-        try {
-            coords = em.createNamedQuery("findCoordinatesByType").setParameter("type",Type.valueOf(type)).getResultList();
-        } catch (Exception e) {
-            throw new FindException(e.getMessage());
-        }
-        return coords;
-    }
-    
-    @Override
-    public Long getIdByData(Coordinate coordinate) throws FindException{
-        try {
-            return (Long) em.createNamedQuery("getCoordinateIdByData")
-                    .setParameter("latitude", coordinate.getLatitude())
-                    .setParameter("longitude", coordinate.getLongitude())
-                    .setParameter("type", coordinate.getType()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } catch (Exception e) {
-			throw new FindException(e.getMessage());
-		}
-    }
-
-    @Override
-    public void updateCoordinateRoute(Coordinate_Route visited) throws UpdateException{
-        try{
-            em.merge(visited);
-            em.flush();
-        }catch(Exception e){
-            throw new UpdateException(e.getMessage());
-        }
-    }
-
-    @Override
-    public void createDirection(Direction direction) throws CreateException {
-        try{
-            createCoordinate(direction.getCoordinate());
-            em.persist(direction);
-        }catch(Exception e){
-            throw new CreateException(e.getMessage());
-        }
-    }
-
-    @Override
-    public List<Direction> findDirectionsByType(String type) throws FindException{
-        List<Direction> directions = null;
-        try {
-            directions = em.createNamedQuery("findDirectionsByType").setParameter("type",Type.valueOf(type)).getResultList();
-        } catch (Exception e) {
-            throw new FindException(e.getMessage());
-        }
-        return directions;
-    }*/
     
     private String createCode() {
         String code = "";

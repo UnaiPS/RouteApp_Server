@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import routeappjpa.FullRoute;
 import routeappjpa.Route;
 
 /**
@@ -35,9 +36,9 @@ public class RouteFacadeREST {
     
     @POST
     @Consumes({MediaType.APPLICATION_XML})
-    public void create(Route route) {
+    public void create(FullRoute fullRoute) {
         try {
-            ejb.createRoute(route);
+            ejb.createRoute(fullRoute);
         } catch (CreateException ex) {
             Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());

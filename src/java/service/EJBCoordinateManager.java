@@ -9,9 +9,11 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.FindException;
 import exceptions.UpdateException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -33,9 +35,12 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     @Override
     public void createCoordinate(Coordinate coordinate) throws CreateException{
         try{
-            if (getIdByData(coordinate) == null) {
+            Long id = getIdByData(coordinate);
+            if (id == null) {
                 em.persist(coordinate);
+                id = coordinate.getId();
             }
+            
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
@@ -92,12 +97,12 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         } catch (NoResultException e) {
             return null;
         } catch (Exception e) {
-			throw new FindException(e.getMessage());
-		}
+            throw new FindException(e.getMessage());
+        }
     }
 
     @Override
-    public void updateCoordinateRoute(Coordinate_Route visited) throws UpdateException{
+    public void updateCoordinateRoute (Coordinate_Route visited) throws UpdateException{
         try{
             em.merge(visited);
             em.flush();
@@ -109,7 +114,11 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     @Override
     public void createDirection(Direction direction) throws CreateException {
         try{
-            createCoordinate(direction.getCoordinate());
+            direction.setCoordinate(findCoordinate(getIdByData(direction.getCoordinate())));
+            em.createNamedQuery("findDirectionByCoordinate").setParameter("coordinate",direction.getCoordinate()).getSingleResult();
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe("Entity already exists.");
+            
+        }catch(NoResultException e){
             em.persist(direction);
         }catch(Exception e){
             throw new CreateException(e.getMessage());
@@ -125,6 +134,16 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
             throw new FindException(e.getMessage());
         }
         return directions;
+    }
+
+    @Override
+    public void createCoordinateRoute(Coordinate_Route segment) throws CreateException {
+        try {
+            createCoordinate(segment.getCoordinate());
+            em.persist(segment);
+        } catch (Exception e) {
+            throw new CreateException(e.getMessage());
+        }
     }
     
 }

@@ -19,6 +19,9 @@ public class Coordinate_RouteId implements Serializable {
     private Long routeId;
     private Long coordinateId;
 
+    public Coordinate_RouteId() {
+    }
+
     /**
      * @return the routeId
      */
@@ -50,8 +53,8 @@ public class Coordinate_RouteId implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.routeId);
-        hash = 29 * hash + Objects.hashCode(this.coordinateId);
+        hash = 29 * hash + Objects.hashCode(this.getRouteId());
+        hash = 29 * hash + Objects.hashCode(this.getCoordinateId());
         return hash;
     }
 
@@ -80,7 +83,7 @@ public class Coordinate_RouteId implements Serializable {
 
     @Override
     public String toString() {
-        return "Coordinate_RouteId{" + "routeId=" + routeId + ", coordinateId=" + coordinateId + '}';
+        return "Coordinate_RouteId{" + "routeId=" + getRouteId() + ", coordinateId=" + getCoordinateId() + '}';
     }
 
     

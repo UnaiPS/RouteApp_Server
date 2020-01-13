@@ -5,6 +5,8 @@
  */
 package service;
 
+import encryption.Decrypt;
+import encryption.Hasher;
 import exceptions.BadPasswordException;
 import exceptions.EmailException;
 import exceptions.IncorrectPasswdException;
@@ -13,6 +15,7 @@ import exceptions.EdittingException;
 import exceptions.CreateException;
 import exceptions.UserNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.bind.DatatypeConverter;
 import messages.UserPasswd;
 import routeappjpa.Privilege;
 import routeappjpa.Status;
@@ -93,11 +97,13 @@ public class EJBUser<T> implements EJBUserLocal {
     
     @Override
     public User login(User user) throws BadPasswordException, UserNotFoundException{
-        User u = new User();  
+        User u = new User();
+        Decrypt decrypt = new Decrypt();
         try{
          u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
-         u.setLastAccess(new Date());
-          if(u.getPassword().equals(user.getPassword())){
+         
+         
+          if(Hasher.encrypt(new String (decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))).equals(u.getPassword())){
               user.setEmail(u.getEmail());
               user.setFullName(u.getFullName());
               user.setId(u.getId());
@@ -107,6 +113,8 @@ public class EJBUser<T> implements EJBUserLocal {
               user.setPrivilege(u.getPrivilege());
               user.setStatus(u.getStatus());
               user.setPassword(null);
+              
+              u.setLastAccess(new Date());
               return user;
           }else{
               throw new BadPasswordException("The data you've entered isn't correct.");

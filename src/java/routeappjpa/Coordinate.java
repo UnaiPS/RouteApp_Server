@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import routeappjpa.Type;
 
 /**
  *

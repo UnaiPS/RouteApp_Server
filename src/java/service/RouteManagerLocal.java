@@ -11,6 +11,7 @@ import exceptions.FindException;
 import exceptions.EdittingException;
 import java.util.List;
 import javax.ejb.Local;
+import routeappjpa.FullRoute;
 import routeappjpa.Route;
 
 /**
@@ -19,7 +20,7 @@ import routeappjpa.Route;
  */
 @Local
 public interface RouteManagerLocal {
-    public void createRoute(Route route) throws CreateException;
+    public void createRoute(FullRoute fullRoute) throws CreateException;
 
     public void updateRoute(Route route) throws EdittingException;
 

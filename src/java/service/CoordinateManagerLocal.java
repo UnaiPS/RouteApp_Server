@@ -37,4 +37,6 @@ public interface CoordinateManagerLocal {
     public void updateCoordinateRoute(Coordinate_Route visited) throws UpdateException;
     
     public List<Direction> findDirectionsByType(String type) throws FindException;
+
+    public void createCoordinateRoute(Coordinate_Route segment) throws CreateException;
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
+import routeappjpa.FullRoute;
 
 /**
  *
@@ -92,7 +94,7 @@ public class CoordinateFacadeREST {
         return coords;
     }
 	
-	@GET
+    @GET
     @Path("direction/{type}")
     @Produces({MediaType.APPLICATION_XML})
     public List<Direction> findDirectionsByType(@PathParam("type") String type) {
@@ -106,18 +108,31 @@ public class CoordinateFacadeREST {
 		return directions;
     }
 	
-    @POST
+    /*@POST
     @Path("direction")
     @Consumes({MediaType.APPLICATION_XML})
-    public void createDirection(Direction direction) {
+    public void createDirection(FullRoute fullRoute) {
         try {
-            ejb.createDirection(direction);
+            fullRoute.getDirections().stream().forEach(d -> ::createDirection);
+            
         } catch (CreateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
     
+    @DELETE
+    @Path("direction")
+    @Consumes({MediaType.APPLICATION_XML})
+    public void deleteDirection(Direction direction) {
+        try {
+            ejb.deleteDirection(direction);
+        } catch (CreateException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
+    }
+    */
     @PUT
     @Path("direction/visited/{id}")
     @Consumes({MediaType.APPLICATION_XML})
