@@ -159,7 +159,7 @@ public class EJBUser<T> implements EJBUserLocal {
                 change.setOldpassword(olduser.getPassword());
                 change.setNewpassword(nuevaContra);
                 editPasswd(change);
-                e.sendEmail(email, nuevaContra);
+                e.sendEmail(email, nuevaContra, 0);
             }else{
                 throw new DoesntMatchException("The login doesn't match with the email.");
             }
