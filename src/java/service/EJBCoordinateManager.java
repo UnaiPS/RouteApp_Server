@@ -34,14 +34,53 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     private EntityManager em;
 
     @Override
-    public void createCoordinate(Coordinate coordinate) throws CreateException{
+    public List<Direction> findDirectionsByType(String type) throws FindException{
+        List<Direction> directions = null;
+        try {
+            directions = em.createNamedQuery("findDirectionsByType").setParameter("type",Type.valueOf(type)).getResultList();
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(directions.toString());
+        } catch (Exception e) {
+            throw new FindException(e.getMessage());
+        }
+        return directions;
+    }
+    
+    @Override
+    public List<Direction> findDirectionsByRoute(String routeId) throws FindException{
+        List<Direction> directions = null;
+        try {
+            directions = em.createNamedQuery("findDirectionsByRoute").setParameter("routeId",Long.parseLong(routeId)).getResultList();
+        } catch (Exception e) {
+            throw new FindException(e.getMessage());
+        }
+        return directions;
+    }
+    
+    @Override
+    public void updateCoordinateRoute (Coordinate_Route visited, Double latitude, Double longitude) throws UpdateException{
+        try{
+            Coordinate gps = new Coordinate();
+            gps.setLatitude(latitude);
+            gps.setLongitude(longitude);
+            gps.setType(Type.GPS);
+            gps.setId(createCoordinate(gps));
+            visited.setVisited(gps.getId());
+            em.merge(visited);
+            em.flush();
+        }catch(Exception e){
+            throw new UpdateException(e.getMessage());
+        }
+    }
+    
+    @Override
+    public Long createCoordinate(Coordinate coordinate) throws CreateException{
         try{
             Long id = getIdByData(coordinate);
             if (id == null) {
                 em.persist(coordinate);
                 id = coordinate.getId();
             }
-            
+            return id;
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
@@ -111,15 +150,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         }
     }
 
-    @Override
-    public void updateCoordinateRoute (Coordinate_Route visited) throws UpdateException{
-        try{
-            em.merge(visited);
-            em.flush();
-        }catch(Exception e){
-            throw new UpdateException(e.getMessage());
-        }
-    }
+    
 
     @Override
     public void createDirection(Direction direction) throws CreateException {
@@ -135,21 +166,12 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         }
     }
 
-    @Override
-    public List<Direction> findDirectionsByType(String type) throws FindException{
-        List<Direction> directions = null;
-        try {
-            directions = em.createNamedQuery("findDirectionsByType").setParameter("type",Type.valueOf(type)).getResultList();
-        } catch (Exception e) {
-            throw new FindException(e.getMessage());
-        }
-        return directions;
-    }
+    
 
     @Override
     public void createCoordinateRoute(Coordinate_Route segment) throws CreateException {
         try {
-            createCoordinate(segment.getCoordinate());
+            segment.getCoordinate().setId(createCoordinate(segment.getCoordinate()));
             em.persist(segment);
         } catch (Exception e) {
             throw new CreateException(e.getMessage());
@@ -172,4 +194,5 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
             throw new DeleteException(e.getMessage());
         }
     }
+    
 }

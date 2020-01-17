@@ -6,7 +6,7 @@
 package routeappjpa;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,7 +35,8 @@ public class Session implements Serializable {
     @NotNull
     private String code;
     @NotNull
-    private Timestamp lastAction;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastAction;
 
     
 
@@ -72,14 +73,14 @@ public class Session implements Serializable {
     /**
      * @return the lastAction
      */
-    public Timestamp getLastAction() {
+    public Date getLastAction() {
         return lastAction;
     }
 
     /**
      * @param lastAction the lastAction to set
      */
-    public void setLastAction(Timestamp lastAction) {
+    public void setLastAction(Date lastAction) {
         this.lastAction = lastAction;
     }
 

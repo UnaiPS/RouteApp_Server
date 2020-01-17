@@ -23,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import routeappjpa.FullRoute;
+import routeappjpa.Privilege;
 import routeappjpa.Route;
 
 /**
@@ -33,10 +34,14 @@ import routeappjpa.Route;
 public class RouteFacadeREST {
     @EJB
     private RouteManagerLocal ejb;
+    @EJB
+    private SessionManagerLocal ejbSession;
     
     @POST
+    @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void create(FullRoute fullRoute) {
+    public void create(@PathParam("code") String code, FullRoute fullRoute) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             ejb.createRoute(fullRoute);
         } catch (CreateException ex) {
@@ -46,10 +51,12 @@ public class RouteFacadeREST {
     }
 
     @PUT
+    @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void edit(Route route) {
+    public void edit(@PathParam("code") String code, FullRoute fullRoute) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
-            ejb.updateRoute(route);
+            ejb.updateRoute(fullRoute);
         } catch (EdittingException ex) {
             Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
@@ -57,8 +64,9 @@ public class RouteFacadeREST {
     }
 
     @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Long id) {
+    @Path("{code}/{id}")
+    public void remove(@PathParam("code") String code, @PathParam("id") Long id) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             ejb.removeRoute(id);
         } catch (DeleteException ex) {
@@ -68,9 +76,10 @@ public class RouteFacadeREST {
     }
 
     @GET
-    @Path("{id}")
+    @Path("{code}/{id}")
     @Produces({MediaType.APPLICATION_XML})
-    public Route find(@PathParam("id") Long id) {
+    public Route find(@PathParam("code") String code, @PathParam("id") Long id) {
+        ejbSession.checkSession(code,null);
         try {
             return ejb.findRoute(id);
         } catch (FindException ex) {
@@ -80,9 +89,12 @@ public class RouteFacadeREST {
     }
 
     @GET
+    @Path("{code}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<Route> findAll() {
+    public List<Route> findAll(@PathParam("code") String code) {
+        ejbSession.checkSession(code,null);
         try {
+            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ejb.findAllRoutes().get(0).getAssignedTo().toString());
             return ejb.findAllRoutes();
         } catch (Exception e) {
             Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());
@@ -92,9 +104,10 @@ public class RouteFacadeREST {
     }
 
     @GET
-    @Path("assignedTo/{id}")
+    @Path("assignedTo/{code}/{id}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<Route> findByAssignedTo(@PathParam("id") Long userId) {
+    public List<Route> findByAssignedTo(@PathParam("code") String code, @PathParam("id") Long userId) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             return ejb.findByAssignedUser(userId);
         } catch (Exception e) {

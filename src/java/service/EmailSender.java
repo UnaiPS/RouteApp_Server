@@ -32,7 +32,8 @@ public class EmailSender {
     // DNS Host + SMTP Port
     private String smtp_host = null;
     private int smtp_port = 0;
-
+    private String fileToRead = "";
+    
     // Default DNS Host + port
     private static final String DEFAULT_SMTP_HOST = "posta.tartanga.eus";
     private static final int DEFAULT_SMTP_PORT = 25;
@@ -52,7 +53,16 @@ public class EmailSender {
      * @return the integer 200 if everything's gone right
      * @throws MessagingException 
      */
-    public int sendEmail(String email, String contrasena) throws MessagingException{
+    public int sendEmail(String email, String contrasena, int type) throws MessagingException{
+        String subject = null;
+        if(type==0) {
+            fileToRead= "..\\mediafiles\\email.html";
+            subject = "Account Recovery";
+        } else {
+            fileToRead= "..\\mediafiles\\emailchangeaccount.html";
+            subject = "Email Confirmation";
+        }
+        fileToRead = this.getClass().getResource(fileToRead).getFile();
         try{
             ResourceBundle prop = ResourceBundle.getBundle("emailencoding.prop");
             String clave = prop.getString("clave");
@@ -80,14 +90,14 @@ public class EmailSender {
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(user)); // Ej: emisor@gmail.com
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email)); // Ej: receptor@gmail.com
-        message.setSubject("Recupera tu cuenta"); // Asunto del mensaje
+        message.setSubject(subject); // Asunto del mensaje
 
         // A mail can have several parts
         Multipart multipart = new MimeMultipart();
 
         // A message part (the message, but can be also a File, etc...)
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        String cuerpo = EmailSender.emailBody(contrasena);
+        String cuerpo = this.emailBody(contrasena);
         mimeBodyPart.setContent(cuerpo, "text/html");
         multipart.addBodyPart(mimeBodyPart);
 
@@ -108,11 +118,10 @@ public class EmailSender {
      * @param newPass the new password.
      * @return a String with the html content.
      */
-    public static String emailBody(String newPass){
+    public String emailBody(String newPass){
                 StringBuilder contentBuilder = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\mediafiles\\email.html"))) 
+                try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) 
             {
-
                 String sCurrentLine;
                 while ((sCurrentLine = br.readLine()) != null) 
                 {

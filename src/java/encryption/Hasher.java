@@ -7,6 +7,8 @@ package encryption;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -15,11 +17,15 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class Hasher {
     
-    public static String encrypt(String data) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest;
-        messageDigest = MessageDigest.getInstance("MD5");
-        byte dataBytes[] = data.getBytes();
-        messageDigest.update(dataBytes);
+    public static String encrypt(String data) {
+        MessageDigest messageDigest = null;
+        try{
+            messageDigest = MessageDigest.getInstance("MD5");
+            byte dataBytes[] = data.getBytes();
+            messageDigest.update(dataBytes);
+        }catch(NoSuchAlgorithmException ex) {
+            Logger.getLogger(Hasher.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+        }
         return DatatypeConverter.printHexBinary(messageDigest.digest());
     }
 }

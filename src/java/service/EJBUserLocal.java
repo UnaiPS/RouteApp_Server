@@ -16,6 +16,7 @@ import exceptions.UserNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
 import messages.UserPasswd;
+import routeappjpa.Session;
 import routeappjpa.User;
 
 /**
@@ -30,10 +31,12 @@ public interface EJBUserLocal {
     public void removeUser(Long id) throws DeleteException;
     public User find(Long id) throws UserNotFoundException;
     public User findAccountByLogin(String login) throws UserNotFoundException;
-    public List<User> findAllDeliveryAccounts();
+    public List<User> findByPrivilege(String privilege);
     public List<User> findAll();
-    public int forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException;
-    public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException;
-    public User prueba(Long id, String fullName);
-    public User login(User user) throws BadPasswordException, UserNotFoundException;
+    public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException;
+    //public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException;
+    //public User prueba(Long id, String fullName);
+    public Session login(User user) throws BadPasswordException, UserNotFoundException;
+
+    public String emailConfirmation(User user);
 }

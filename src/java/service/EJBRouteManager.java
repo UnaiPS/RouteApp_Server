@@ -60,9 +60,10 @@ public class EJBRouteManager implements RouteManagerLocal{
     }
 
     @Override
-    public void updateRoute(Route route) throws EdittingException{
+    public void updateRoute(FullRoute fullRoute) throws EdittingException{
         try{
-            em.merge(route);
+            Logger.getLogger(EJBRouteManager.class.getName()).severe(fullRoute.getRoute().getCoordinates().toArray()[0].toString());
+            em.merge(fullRoute.getRoute());
             em.flush();
         }catch(Exception e){
             throw new EdittingException(e.getMessage());

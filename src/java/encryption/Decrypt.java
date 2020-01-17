@@ -11,19 +11,21 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
  * @author Unai Pérez Sánchez
  */
 public class Decrypt {
-    public static byte[] descifrarTexto(byte[] mensaje) {
+    public static String descifrarTexto(String codedMessage) {
+        byte[] message = DatatypeConverter.parseHexBinary(codedMessage);
         KeyReader rsa = new KeyReader();
         
         byte[] decodedMessage = null;
         try {
                 // Private key
-                byte fileKey[] = rsa.fileReader("..\\keys\\Private.key");
+                byte fileKey[] = rsa.fileReader("..\\keys\\Private.key", true);
                 
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 PKCS8EncodedKeySpec pKCS8EncodedKeySpec = new PKCS8EncodedKeySpec(fileKey);
@@ -31,10 +33,10 @@ public class Decrypt {
 
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-                decodedMessage = cipher.doFinal(mensaje);
+                decodedMessage = cipher.doFinal(message);
         } catch (Exception e) {
                 Logger.getLogger(Decrypt.class.getName()).log(Level.SEVERE, null, e.getLocalizedMessage());
         }
-        return decodedMessage;
+        return new String(decodedMessage);
     }
 }

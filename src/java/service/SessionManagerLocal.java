@@ -8,6 +8,10 @@ package service;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.FindException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import routeappjpa.Privilege;
 import routeappjpa.Session;
 import routeappjpa.User;
 
@@ -18,5 +22,5 @@ import routeappjpa.User;
 public interface SessionManagerLocal {
     public Session getSession(User user) throws CreateException, DeleteException;
     
-    public User checkSession(String encryptSession) throws FindException;
+    public User checkSession(String encryptSession, Privilege requieredPrivilege) throws InternalServerErrorException,NotAuthorizedException, ForbiddenException;
 }

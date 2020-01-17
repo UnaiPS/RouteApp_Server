@@ -18,10 +18,11 @@ import java.net.URL;
  * @author Unai Pérez Sánchez
  */
 public class KeyReader {
-    public byte[] fileReader(String path) throws IOException{
-        URL url = this.getClass().getResource(path);
-        File file = new File(url.getFile());
-        
+    public byte[] fileReader(String path, Boolean isUrl) throws IOException{
+        if (isUrl) {
+            path = this.getClass().getResource(path).getFile();
+        }
+        File file = new File(path);
         ByteArrayOutputStream ous = null;
         InputStream ios = null;
         try {

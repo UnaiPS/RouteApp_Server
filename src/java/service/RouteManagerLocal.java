@@ -22,7 +22,7 @@ import routeappjpa.Route;
 public interface RouteManagerLocal {
     public void createRoute(FullRoute fullRoute) throws CreateException;
 
-    public void updateRoute(Route route) throws EdittingException;
+    public void updateRoute(FullRoute fullRoute) throws EdittingException;
 
     public void removeRoute(Long routeId) throws DeleteException;
 

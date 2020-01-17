@@ -61,12 +61,14 @@ public class EncoderDecoderEmail {
 			// Guardamos el mensaje codificado en el archivo correspondiente dependiendo
                         // de si es email o contraseña: IV (16 bytes) + Mensaje
 			byte[] combined = concatArrays(iv, encodedMessage);
-                        if(tipo==1){
-			fileWriter("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\emailencoding\\Email.dat", combined);
-                        }else{
-                        fileWriter("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\emailencoding\\ContraEmail.dat", combined);
-                        }
+                        String path = null;
+                        if(tipo == 1){
+                            path = "..\\emailencoding\\Email.dat";
 
+                        }else{
+                            path = "..\\emailencoding\\ContraEmail.dat";
+                        }
+                        fileWriter(this.getClass().getResource(path).getFile(),combined);
 			cifrado = new String(encodedMessage);
 
 		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
@@ -86,12 +88,14 @@ public class EncoderDecoderEmail {
 	public String descifrarTexto(String clave, int tipo) {
 		String desencriptado = null;
                 byte[] fileContent;
+                String path = null;
 		if(tipo == 1){
-                    fileContent = fileReader("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\emailencoding\\Email.dat");
+                    path = "..\\emailencoding\\Email.dat";
 
                 }else{
-                    fileContent = fileReader("C:\\Users\\2dam\\Documents\\NetBeansProjects\\Server\\src\\java\\emailencoding\\ContraEmail.dat");
+                    path = "..\\emailencoding\\ContraEmail.dat";
                 }
+                fileContent = fileReader(this.getClass().getResource(path).getFile());
 		KeySpec keySpec;
 		SecretKeyFactory secretKeyFactory = null;
 		try {

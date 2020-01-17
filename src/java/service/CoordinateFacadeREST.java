@@ -9,6 +9,7 @@ import exceptions.CreateException;
 import exceptions.FindException;
 import exceptions.UpdateException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -25,6 +26,7 @@ import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
 import routeappjpa.FullRoute;
+import routeappjpa.Privilege;
 
 /**
  *
@@ -34,19 +36,25 @@ import routeappjpa.FullRoute;
 public class CoordinateFacadeREST {
     @EJB
     private CoordinateManagerLocal ejb;
-    
+    @EJB
+    private SessionManagerLocal ejbSession;
+    /*
     @POST
+    @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void createCoordinate(Coordinate coordinate) {
+    public void createCoordinate(@PathParam("code") String code, Coordinate coordinate) {
         try {
             ejb.createCoordinate(coordinate);
         } catch (CreateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
+        } catch (FindException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
         }
     }
 
-    /*@PUT
+    @PUT
     @Consumes({MediaType.APPLICATION_XML})
     public void edit(Coordinate coordinate) {
         try {
@@ -78,34 +86,51 @@ public class CoordinateFacadeREST {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
-    }*/
+    }
 
     @GET
-    @Path("type/{type}")
+    @Path("type/{type}/{code}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<Coordinate> findByType(@PathParam("type") String type) {
+    public List<Coordinate> findByType(@PathParam("type") String type, @PathParam("code") String code) {
         List<Coordinate> coords=null;
         try {
+            ejbSession.checkSession(code);
             coords = ejb.findByType(type);
         } catch (Exception e) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
         return coords;
-    }
+    }*/
 	
     @GET
-    @Path("direction/{type}")
+    @Path("direction/type/{code}/{type}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<Direction> findDirectionsByType(@PathParam("type") String type) {
+    public List<Direction> findDirectionsByType(@PathParam("code") String code, @PathParam("type") String type) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         List<Direction> directions = null;
-		try {
-            ejb.findDirectionsByType(type);
+        try {
+            directions = ejb.findDirectionsByType(type);
         } catch (FindException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
-		return directions;
+        return directions;
+    }
+    
+    @GET
+    @Path("direction/route/{code}/{route}")
+    @Produces({MediaType.APPLICATION_XML})
+    public List<Direction> findDirectionsByRoute(@PathParam("code") String code, @PathParam("route") String routeId) {
+        ejbSession.checkSession(code,null);
+        List<Direction> directions = null;
+        try {
+            directions = ejb.findDirectionsByRoute(routeId);
+        } catch (FindException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
+            return directions;
     }
 	
     /*@POST
@@ -134,12 +159,12 @@ public class CoordinateFacadeREST {
     }
     */
     @PUT
-    @Path("direction/visited/{id}")
+    @Path("direction/visited/{code}/{latitude}/{longitude}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void markDestinationVisited(@PathParam("id") Long gpsId, Coordinate_Route visited) {
+    public void markDestinationVisited(@PathParam("code") String code, @PathParam("latitude") Double latitude, @PathParam("longitude") Double longitude, Coordinate_Route visited) {
+        ejbSession.checkSession(code,Privilege.USER);
         try {
-            visited.setVisited(gpsId);
-            ejb.updateCoordinateRoute(visited);
+            ejb.updateCoordinateRoute(visited, latitude, longitude);
         } catch (UpdateException ex) {
             Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());

@@ -142,7 +142,7 @@ public class Coordinate_Route implements Serializable {
 
     @Override
     public String toString() {
-        return "Coordinate_Route{" + "route=" + route + ", order=" + wayOrder + '}';
+        return "Coordinate_Route{" + "coordinate=" + coordinate + ", route=" + route + ", order=" + wayOrder + '}';
     }
 
     

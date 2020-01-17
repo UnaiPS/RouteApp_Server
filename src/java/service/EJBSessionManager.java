@@ -5,22 +5,30 @@
  */
 package service;
 
+import encryption.Decrypt;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.FindException;
 import exceptions.UpdateException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.ForbiddenException;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
+import routeappjpa.Privilege;
 import routeappjpa.Session;
 import routeappjpa.Type;
 import routeappjpa.User;
@@ -49,39 +57,60 @@ public class EJBSessionManager implements SessionManagerLocal{
                     throw new DeleteException(e.getMessage());
                 }
                 throw new NoResultException("The user has been inactive for " + MINUTES + " minutes. Creating new Session.");
+            } else {
+                session.setLastAction(Date.from(Instant.now()));
+                em.merge(session);
+                em.flush();
             }
         } catch (NoResultException e) {
+            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, e.getLocalizedMessage());
             session = new Session();
             session.setLogged(user);
             session.setCode(createCode());
-            session.setLastAction(Timestamp.from(Instant.now()));
+            session.setLastAction(Date.from(Instant.now()));
+            em.persist(session);
         } catch(DeleteException e){
             throw e;
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
+
         return session;
     }
 
     @Override
-    public User checkSession(String encryptSession) throws FindException {
+    public User checkSession(String encryptSession, Privilege requiredPrivilege) throws InternalServerErrorException,NotAuthorizedException, ForbiddenException {
         User user = null;
+        String code = null;
+        Long millis = null;
         try{
-            //TODO Encryptation
-            String code = encryptSession.substring(0, 6);
-            Long millis = Long.getLong(encryptSession.substring(6));
+            try{
+                encryptSession = Decrypt.descifrarTexto(encryptSession);
+                code = encryptSession.substring(0, 6);
+                millis = Long.parseLong(encryptSession.substring(6));
+
+            }catch (Exception ex){
+                throw new BadRequestException(ex.getMessage());
+            }
             Session session = (Session) em.createNamedQuery("findSessionByCode")
                 .setParameter("code", code).getSingleResult();
-            long lastAction = session.getLastAction().getTime();
-            if (lastAction > millis || millis > Timestamp.from(Instant.now()).getTime()) {
-                user = session.getLogged();
-            } else {
+            long lastAction = session.getLastAction().getTime()-999L;
+            if (lastAction > millis || millis > Instant.now().toEpochMilli()) {
                 throw new NoResultException();
+            } else if (requiredPrivilege != null && !session.getLogged().getPrivilege().equals(requiredPrivilege)) {
+                throw new ForbiddenException("Wrong user privilege.");
+            } else {
+                user = session.getLogged();
+                session.setLastAction(Date.from(Instant.now()));
+                em.merge(session);
+                em.flush();
             }
         } catch (NoResultException e) {
-            throw new FindException("Invalid code.");
+            throw new NotAuthorizedException("Invalid code.");
+        } catch (ForbiddenException | BadRequestException e) {
+            throw e;
         }catch(Exception e){
-            throw new FindException(e.getMessage());
+            throw new InternalServerErrorException(e.getMessage());
         }
         return user;
     }

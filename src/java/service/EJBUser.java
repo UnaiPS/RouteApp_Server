@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
@@ -29,7 +30,9 @@ import javax.persistence.PersistenceContext;
 import javax.xml.bind.DatatypeConverter;
 import messages.UserPasswd;
 import routeappjpa.Privilege;
+import routeappjpa.Session;
 import routeappjpa.Status;
+import routeappjpa.Type;
 import routeappjpa.User;
 
 /**
@@ -43,26 +46,30 @@ public class EJBUser<T> implements EJBUserLocal {
     
     @PersistenceContext(unitName = "RouteJPAPU")
     private EntityManager em;
-
+    @EJB
+    private SessionManagerLocal ejbSession;
 
     @Override
     public void createUser(User user) throws CreateException {
         try{
-            user.setPassword(Hasher.encrypt(new String (Decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))));
+            user.setPassword(Hasher.encrypt(Decrypt.descifrarTexto(user.getPassword())));
             em.persist(user);
         }catch(Exception e){
                 throw new CreateException(e.getMessage());
         }
     }
-    
+    /*
     @Override
     public User prueba(Long id, String fullName)  {
             return (User)em.createNamedQuery("prueba").setParameter("id", id).setParameter("fullName", fullName).getSingleResult();
     }
-
+    */
     @Override
     public void editUser(User user) throws EdittingException {
         try{
+            if (find(user.getId()).getLastPasswordChange().compareTo(user.getLastPasswordChange())<0) {
+                user.setPassword(Hasher.encrypt(Decrypt.descifrarTexto(user.getPassword())));
+            }
             em.merge(user);
             em.flush();
         }catch(Exception e){
@@ -92,31 +99,19 @@ public class EJBUser<T> implements EJBUserLocal {
     
     
     @Override
-    public User login(User user) throws BadPasswordException, UserNotFoundException{
+    public Session login(User user) throws BadPasswordException, UserNotFoundException{
         User u = new User();
         try{
-         u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
-         
-         
-          if(Hasher.encrypt(new String (Decrypt.descifrarTexto(DatatypeConverter.parseHexBinary(user.getPassword())))).equals(u.getPassword())){
-              user.setEmail(u.getEmail());
-              user.setFullName(u.getFullName());
-              user.setId(u.getId());
-              user.setLastAccess(u.getLastAccess());
-              user.setLastPasswordChange(u.getLastPasswordChange());
-              user.setLogin(u.getLogin());
-              user.setPrivilege(u.getPrivilege());
-              user.setStatus(u.getStatus());
-              user.setPassword(null);
-              
-              u.setLastAccess(new Date());
-              return user;
-          }else{
-              throw new BadPasswordException("The data you've entered isn't correct.");
-          }
+            u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
+            if(Hasher.encrypt(Decrypt.descifrarTexto(user.getPassword())).equals(u.getPassword())){
+                u.setLastAccess(new Date());
+                return ejbSession.getSession(u);
+            }else{
+                throw new BadPasswordException("The data you've entered isn't correct.");
+            }
         }catch(Exception e){
-              throw new UserNotFoundException(e.getMessage());
-          }
+            throw new UserNotFoundException(e.getMessage());
+        }
     }
 
     @Override
@@ -128,23 +123,8 @@ public class EJBUser<T> implements EJBUserLocal {
         }
     }
     @Override
-    public List<User> findAllDeliveryAccounts() {
-         List<User> users = em.createNamedQuery("findAllDeliveryAccounts").getResultList();
-         List<User> userReturn = new ArrayList<User>();
-         for(User u: users){
-             User user = new User();
-             user.setEmail(u.getEmail());
-             user.setFullName(u.getFullName());
-             user.setId(u.getId());
-             user.setLastAccess(u.getLastAccess());
-             user.setLastPasswordChange(u.getLastPasswordChange());
-             user.setLogin(u.getLogin());
-             user.setPassword(null);
-             user.setPrivilege(u.getPrivilege());
-             user.setStatus(u.getStatus());
-             userReturn.add(user);
-         }
-         return userReturn;
+    public List<User> findByPrivilege(String privilege) {
+        return em.createNamedQuery("findByPrivilege").setParameter("privilege",Privilege.valueOf(privilege)).getResultList();
     }
     
     @Override
@@ -154,19 +134,17 @@ public class EJBUser<T> implements EJBUserLocal {
     
     
     @Override
-    public int forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
+    public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
         try {
-            User olduser = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
-            if(olduser.getEmail().equals(email)){
-                EmailSender e = new EmailSender("smtp.gmail.com", "587");
+            User user = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
+            if(user.getEmail().equals(email)){
+                EmailSender es = new EmailSender("smtp.gmail.com", "587");
                 //Aquí vendría todo lo de generar la nueva contraseña y meterla en la base de datos.
-                String nuevaContra = createCode();
-                UserPasswd change = new UserPasswd();
-                change.setLogin(login);
-                change.setOldpassword(olduser.getPassword());
-                change.setNewpassword(nuevaContra);
-                editPasswd(change);
-                e.sendEmail(email, nuevaContra);
+                String nuevaContra = createCode(10);
+                
+                user.setPassword(nuevaContra);
+                editUser(user);
+                es.sendEmail(email, nuevaContra, 0);
             }else{
                 throw new DoesntMatchException("The login doesn't match with the email.");
             }
@@ -174,10 +152,9 @@ public class EJBUser<T> implements EJBUserLocal {
         } catch (Exception ex) {
             throw new EmailException(ex.getMessage());
         }
-        return 1;
     }
     
-    
+    /*
     @Override
     public User editPasswd(UserPasswd user) throws IncorrectPasswdException, EdittingException{
         User olduser = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
@@ -197,10 +174,25 @@ public class EJBUser<T> implements EJBUserLocal {
             throw new IncorrectPasswdException("The password is not correct.");
         }
     }
+    */
     
-        private static String createCode() {
+    @Override
+    public String emailConfirmation(User user) {
+        //TODO
+        String code = createCode(4);
+        try{
+            EmailSender es = new EmailSender("smtp.gmail.com", "587");           
+            es.sendEmail(user.getEmail(), code, 1);
+        } catch (Exception ex) {
+            Logger.getLogger(EJBUser.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+        }
+        return Hasher.encrypt(code);
+    }
+    
+    
+    private static String createCode(int length) {
         String code = "";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < length; i++) {
             if (Math.random() < 0.5) {
                 int num = (int) Math.floor(Math.random()*(91-65)+65);
                 if (Math.random() < 0.5) {
@@ -215,4 +207,6 @@ public class EJBUser<T> implements EJBUserLocal {
         }
         return code;
     }
+
+    
 }

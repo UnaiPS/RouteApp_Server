@@ -30,6 +30,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import messages.UserPasswd;
+import routeappjpa.Privilege;
+import routeappjpa.Session;
 import routeappjpa.User;
 
 /**
@@ -42,6 +44,8 @@ public class UserFacadeREST {
 
     @EJB
     private EJBUserLocal ejb;
+    @EJB
+    private SessionManagerLocal ejbSession;
     
     @POST
     @Consumes({MediaType.APPLICATION_XML})
@@ -54,9 +58,10 @@ public class UserFacadeREST {
     }
 
     @PUT
-    @Path("{id}")
+    @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void edit(@PathParam("id") Long id, User entity) throws UserNotFoundException{
+    public void edit(@PathParam("code") String code, User entity) throws UserNotFoundException{
+        ejbSession.checkSession(code,null);
         try {
             ejb.editUser(entity);
         } catch (EdittingException ex) {
@@ -68,14 +73,15 @@ public class UserFacadeREST {
     @POST
     @Path("login")
     @Consumes({MediaType.APPLICATION_XML})
-    public User login(User user) throws BadPasswordException, UserNotFoundException {
-                return ejb.login(user);
+    public Session login(User user) throws BadPasswordException, UserNotFoundException {
+        return ejb.login(user);
     }
 
 
     @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Long id) {
+    @Path("{code}/{id}")
+    public void remove(@PathParam("code") String code, @PathParam("id") Long id) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             ejb.removeUser(id);
         } catch (DeleteException ex) {
@@ -84,9 +90,10 @@ public class UserFacadeREST {
     }
 
     @GET
-    @Path("{id}")
+    @Path("{code}/{id}")
     @Produces({MediaType.APPLICATION_XML})
-    public User find(@PathParam("id") Long id) {
+    public User find(@PathParam("code") String code, @PathParam("id") Long id) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             return ejb.find(id);
         } catch (UserNotFoundException ex) {
@@ -95,31 +102,23 @@ public class UserFacadeREST {
         }
     }
     
-    @GET
-    @Path("{id}/{fullName}")
-    @Produces({MediaType.APPLICATION_XML})
-    public User find(@PathParam("id") Long id, @PathParam("fullName") String fullName) {
-    return ejb.prueba(id, fullName);
-
-    }
     
     
     @GET
-    @Path("forgottenpasswd/{email}/{login}")
+    @Path("forgottenpasswd/{login}/{email}")
     @Produces({MediaType.APPLICATION_XML})
-    public int forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) {
+    public void forgottenpasswd(@PathParam("login") String login, @PathParam("email") String email) {
         try {
-            return ejb.forgottenpasswd(email, login);
+            ejb.forgottenpasswd(email, login);
         } catch (EmailException ex) {
             Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
         } catch (DoesntMatchException ex) {
             Logger.getLogger(UserFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 1;
     }
     
     
-    
+    /*
     @PUT
     @Path("editPasswd")
     @Produces({MediaType.APPLICATION_XML})
@@ -133,11 +132,12 @@ public class UserFacadeREST {
         }
         return null;
     }
-    
+    */
     @GET
-    @Path("login/{login}")
+    @Path("login/{code}/{login}")
     @Produces({MediaType.APPLICATION_XML})
-    public User findAccountByLogin(@PathParam("login") String login) {
+    public User findAccountByLogin(@PathParam("code") String code, @PathParam("login") String login) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             return ejb.findAccountByLogin(login);
         } catch (UserNotFoundException ex) {
@@ -147,17 +147,33 @@ public class UserFacadeREST {
     }
     
     @GET
-    @Path("deliveryAccounts")
+    @Path("privilege/{code}/{privilege}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<User> findAllDeliveryAccounts() {
-        List<User> users = ejb.findAllDeliveryAccounts();
-            return users;
+    public List<User> findAllDeliveryAccounts(@PathParam("code") String code, @PathParam("privilege") String privilege) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
+        List<User> users = ejb.findByPrivilege(privilege);
+        return users;
     }
 
     @GET
+    @Path("{code}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<User> findAll() {
+    public List<User> findAll(@PathParam("code") String code) {
+        ejbSession.checkSession(code,Privilege.ADMIN);
         return ejb.findAll();
+    }
+    
+    @POST
+    @Path("email/{code}")
+    @Produces({MediaType.APPLICATION_XML})
+    public String emailConfirmation(@PathParam("code") String code, User entity) {
+        ejbSession.checkSession(code,null);
+        try {
+            return ejb.emailConfirmation(entity);
+        } catch (Exception ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            return null;
+        }
     }
    
 }

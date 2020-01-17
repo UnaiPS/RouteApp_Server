@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name="user", schema="routesdb")
 @NamedQueries({
 @NamedQuery(
-        name="findAllDeliveryAccounts", 
-        query = "SELECT u FROM User u WHERE u.privilege=routeappjpa.Privilege.USER"),
+        name="findByPrivilege", 
+        query = "SELECT u FROM User u WHERE u.privilege=:privilege"),
 @NamedQuery(name="findAll", query="select u from User u ORDER BY u.id"),
 @NamedQuery(name="findAccountByLogin", query="select u from User u where u.login=:login"),
 @NamedQuery(name="prueba", query="select u from User u where u.id=:id and u.fullName=:fullName")

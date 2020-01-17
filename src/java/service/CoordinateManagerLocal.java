@@ -20,7 +20,7 @@ import routeappjpa.Type;
  * @author Jon Calvo Gaminde
  */
 public interface CoordinateManagerLocal {
-    public void createCoordinate(Coordinate coordinate) throws CreateException;
+    public Long createCoordinate(Coordinate coordinate) throws CreateException;
 
     public void updateCoordinate(Coordinate coordinate) throws UpdateException;
 
@@ -34,9 +34,11 @@ public interface CoordinateManagerLocal {
 
     public Long getIdByData(Coordinate coordinate) throws FindException;
 
-    public void updateCoordinateRoute(Coordinate_Route visited) throws UpdateException;
+    public void updateCoordinateRoute (Coordinate_Route visited, Double latitude, Double longitude) throws UpdateException;
     
     public List<Direction> findDirectionsByType(String type) throws FindException;
+    
+    public List<Direction> findDirectionsByRoute(String routeId) throws FindException;
 
     public void createCoordinateRoute(Coordinate_Route segment) throws CreateException;
 

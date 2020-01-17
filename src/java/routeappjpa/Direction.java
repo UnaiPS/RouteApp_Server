@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     ),
     @NamedQuery(name="findDirectionByCoordinate",
             query="SELECT d FROM Direction d WHERE d.coordinate = :coordinate"
+    ),
+    @NamedQuery(name="findDirectionsByRoute",
+            query="SELECT d FROM Direction d WHERE d.coordinate IN (SELECT cr.coordinate FROM Coordinate_Route cr WHERE cr.id.routeId = :routeId)"
     )
 })
 @XmlRootElement
