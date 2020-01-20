@@ -146,6 +146,7 @@ public class EJBUser<T> implements EJBUserLocal {
     }
     
     
+    
     @Override
     public int forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
         try {
