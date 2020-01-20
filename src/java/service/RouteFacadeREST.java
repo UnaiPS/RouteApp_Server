@@ -53,10 +53,13 @@ public class RouteFacadeREST {
     @PUT
     @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML})
-    public void edit(@PathParam("code") String code, FullRoute fullRoute) {
+    public void edit(@PathParam("code") String code, Route route) {
         ejbSession.checkSession(code,Privilege.ADMIN);
+        Logger LOGGER = Logger
+            .getLogger("service.RouteFacadeRest");
+        LOGGER.warning("Server: "+route.toString());
         try {
-            ejb.updateRoute(fullRoute);
+            ejb.updateRoute(route);
         } catch (EdittingException ex) {
             Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());

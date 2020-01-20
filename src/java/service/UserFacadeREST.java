@@ -105,9 +105,9 @@ public class UserFacadeREST {
     
     
     @GET
-    @Path("forgottenpasswd/{login}/{email}")
+    @Path("forgottenpasswd/{email}/{login}")
     @Produces({MediaType.APPLICATION_XML})
-    public void forgottenpasswd(@PathParam("login") String login, @PathParam("email") String email) {
+    public void forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) {
         try {
             ejb.forgottenpasswd(email, login);
         } catch (EmailException ex) {

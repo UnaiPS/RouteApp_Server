@@ -142,7 +142,7 @@ public class EJBUser<T> implements EJBUserLocal {
                 //Aquí vendría todo lo de generar la nueva contraseña y meterla en la base de datos.
                 String nuevaContra = createCode(10);
                 
-                user.setPassword(nuevaContra);
+                user.setPassword(Hasher.encrypt(nuevaContra));
                 editUser(user);
                 es.sendEmail(email, nuevaContra, 0);
             }else{
