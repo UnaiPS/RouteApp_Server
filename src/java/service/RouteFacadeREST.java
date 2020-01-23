@@ -97,7 +97,6 @@ public class RouteFacadeREST {
     public List<Route> findAll(@PathParam("code") String code) {
         ejbSession.checkSession(code,null);
         try {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ejb.findAllRoutes().get(0).getAssignedTo().toString());
             return ejb.findAllRoutes();
         } catch (Exception e) {
             Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());

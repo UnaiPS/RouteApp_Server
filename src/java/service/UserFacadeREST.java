@@ -72,7 +72,7 @@ public class UserFacadeREST {
     
     @POST
     @Path("login")
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Session login(User user) throws BadPasswordException, UserNotFoundException {
         return ejb.login(user);
     }
@@ -149,7 +149,7 @@ public class UserFacadeREST {
     @GET
     @Path("privilege/{code}/{privilege}")
     @Produces({MediaType.APPLICATION_XML})
-    public List<User> findAllDeliveryAccounts(@PathParam("code") String code, @PathParam("privilege") String privilege) {
+    public List<User> findByPrivilege(@PathParam("code") String code, @PathParam("privilege") String privilege) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         List<User> users = ejb.findByPrivilege(privilege);
         return users;

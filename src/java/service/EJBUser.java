@@ -101,6 +101,8 @@ public class EJBUser<T> implements EJBUserLocal {
     @Override
     public Session login(User user) throws BadPasswordException, UserNotFoundException{
         User u = new User();
+        Logger.getLogger(EJBUser.class.getName()).log(Level.SEVERE, "Algo llega.");
+        Logger.getLogger(EJBUser.class.getName()).log(Level.SEVERE, user.getLogin());
         try{
             u = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", user.getLogin()).getSingleResult();
             if(Hasher.encrypt(Decrypt.descifrarTexto(user.getPassword())).equals(u.getPassword())){

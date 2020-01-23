@@ -185,10 +185,11 @@ public class User implements Serializable{
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", login=" + login + ", fullName=" + 
+        /*return "User{" + "id=" + id + ", login=" + login + ", fullName=" + 
                 fullName + ", email=" + email + ", status=" + status + 
                 ", privilege=" + privilege + ", password=" + password + 
                 ", lastAccess=" + lastAccess + ", lastPasswordChange=" 
-                + lastPasswordChange + '}';
+                + lastPasswordChange + '}';*/
+        return fullName;
     }
 }

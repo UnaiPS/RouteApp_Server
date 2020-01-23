@@ -40,19 +40,17 @@ public class EJBRouteManager implements RouteManagerLocal{
         try{
             Route route = fullRoute.getRoute();
             Set<Direction> directions = fullRoute.getDirections();
-   
             em.persist(route);
-            
             for(Coordinate_Route segment : fullRoute.getRoute().getCoordinates()) {
+                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 segment.setRoute(findRoute(route.getId()));
-
+                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 ejbCoordinate.createCoordinateRoute(segment);
             }
-            
             for (Direction direction : directions) {
+                ejbCoordinate.createCoordinate(direction.getCoordinate());
                 ejbCoordinate.createDirection(direction);
             }
-            
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
