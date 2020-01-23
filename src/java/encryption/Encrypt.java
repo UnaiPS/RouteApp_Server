@@ -25,7 +25,7 @@ public class Encrypt {
             try {
                     
                     // Public key
-                    byte fileKey[] = rsa.fileReader("..\\keys\\Public.key", true);
+                    byte fileKey[] = rsa.fileReader("../keys/Public.key", true);
                     
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                     X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(fileKey);

@@ -25,7 +25,7 @@ public class Decrypt {
         byte[] decodedMessage = null;
         try {
                 // Private key
-                byte fileKey[] = rsa.fileReader("..\\keys\\Private.key", true);
+                byte fileKey[] = rsa.fileReader("../keys/Private.key", true);
                 
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 PKCS8EncodedKeySpec pKCS8EncodedKeySpec = new PKCS8EncodedKeySpec(fileKey);

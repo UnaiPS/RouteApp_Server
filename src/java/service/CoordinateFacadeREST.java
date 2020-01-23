@@ -5,27 +5,22 @@
  */
 package service;
 
-import exceptions.CreateException;
+
 import exceptions.FindException;
 import exceptions.UpdateException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
-import routeappjpa.FullRoute;
 import routeappjpa.Privilege;
 
 /**
@@ -38,71 +33,7 @@ public class CoordinateFacadeREST {
     private CoordinateManagerLocal ejb;
     @EJB
     private SessionManagerLocal ejbSession;
-    /*
-    @POST
-    @Path("{code}")
-    @Consumes({MediaType.APPLICATION_XML})
-    public void createCoordinate(@PathParam("code") String code, Coordinate coordinate) {
-        try {
-            ejb.createCoordinate(coordinate);
-        } catch (CreateException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        } catch (FindException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }
-
-    @PUT
-    @Consumes({MediaType.APPLICATION_XML})
-    public void edit(Coordinate coordinate) {
-        try {
-            ejb.updateCoordinate(coordinate);
-        } catch (UpdateException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }*/
-
-    /*@DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Long id) {
-        try {
-            ejb.removeCoordinate(id);
-        } catch (DeleteException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }*/
-
-    /*@GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML})
-    public Coordinate find(@PathParam("id") Long id) {
-        try {
-            return ejb.findCoordinate(id);
-        } catch (FindException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }
-
-    @GET
-    @Path("type/{type}/{code}")
-    @Produces({MediaType.APPLICATION_XML})
-    public List<Coordinate> findByType(@PathParam("type") String type, @PathParam("code") String code) {
-        List<Coordinate> coords=null;
-        try {
-            ejbSession.checkSession(code);
-            coords = ejb.findByType(type);
-        } catch (Exception e) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(e.getMessage());
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        return coords;
-    }*/
-	
+    
     @GET
     @Path("direction/type/{code}/{type}")
     @Produces({MediaType.APPLICATION_XML})
@@ -133,31 +64,7 @@ public class CoordinateFacadeREST {
             return directions;
     }
 	
-    /*@POST
-    @Path("direction")
-    @Consumes({MediaType.APPLICATION_XML})
-    public void createDirection(FullRoute fullRoute) {
-        try {
-            fullRoute.getDirections().stream().forEach(d -> ::createDirection);
-            
-        } catch (CreateException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }
     
-    @DELETE
-    @Path("direction")
-    @Consumes({MediaType.APPLICATION_XML})
-    public void deleteDirection(Direction direction) {
-        try {
-            ejb.deleteDirection(direction);
-        } catch (CreateException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }
-    */
     @PUT
     @Path("direction/visited/{code}/{latitude}/{longitude}")
     @Consumes({MediaType.APPLICATION_XML})

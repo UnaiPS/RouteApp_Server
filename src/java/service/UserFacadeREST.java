@@ -11,15 +11,11 @@ import exceptions.DeleteException;
 import exceptions.DoesntMatchException;
 import exceptions.EdittingException;
 import exceptions.EmailException;
-import exceptions.IncorrectPasswdException;
 import exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,7 +25,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import messages.UserPasswd;
 import routeappjpa.Privilege;
 import routeappjpa.Session;
 import routeappjpa.User;
@@ -38,7 +33,6 @@ import routeappjpa.User;
  *
  * @author Daira Eguzkiza
  */
-@Stateless
 @Path("routeappjpa.user")
 public class UserFacadeREST {
 
@@ -117,22 +111,6 @@ public class UserFacadeREST {
         }
     }
     
-    
-    /*
-    @PUT
-    @Path("editPasswd")
-    @Produces({MediaType.APPLICATION_XML})
-    public User editPasswd(UserPasswd u) {
-        try {
-            return ejb.editPasswd(u);
-        } catch (IncorrectPasswdException ex) {
-            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
-        } catch (EdittingException ex) {
-            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
-        }
-        return null;
-    }
-    */
     @GET
     @Path("login/{code}/{login}")
     @Produces({MediaType.APPLICATION_XML})
