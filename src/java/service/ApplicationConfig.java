@@ -31,9 +31,10 @@ public class ApplicationConfig extends Application {
     //TODO
     //Add all the REST
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
+        resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider.class);
         resources.add(service.CoordinateFacadeREST.class);
         resources.add(service.RouteFacadeREST.class);
-        resources.add(service.SessionFacadeREST.class);
         resources.add(service.UserFacadeREST.class);
     }
     

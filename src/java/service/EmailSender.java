@@ -11,8 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -56,10 +54,10 @@ public class EmailSender {
     public int sendEmail(String email, String contrasena, int type) throws MessagingException{
         String subject = null;
         if(type==0) {
-            fileToRead= "..\\mediafiles\\email.html";
+            fileToRead= "../mediafiles/email.html";
             subject = "Account Recovery";
         } else {
-            fileToRead= "..\\mediafiles\\emailchangeaccount.html";
+            fileToRead= "../mediafiles/emailchangeaccount.html";
             subject = "Email Confirmation";
         }
         fileToRead = this.getClass().getResource(fileToRead).getFile();

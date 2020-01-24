@@ -8,13 +8,8 @@ package service;
 import encryption.Decrypt;
 import exceptions.CreateException;
 import exceptions.DeleteException;
-import exceptions.FindException;
-import exceptions.UpdateException;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -25,12 +20,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.ForbiddenException;
-import routeappjpa.Coordinate;
-import routeappjpa.Coordinate_Route;
-import routeappjpa.Direction;
 import routeappjpa.Privilege;
 import routeappjpa.Session;
-import routeappjpa.Type;
 import routeappjpa.User;
 
 /**

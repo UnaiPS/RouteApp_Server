@@ -8,7 +8,6 @@ package encryption;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.xml.bind.DatatypeConverter;

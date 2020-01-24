@@ -13,7 +13,6 @@ import java.util.List;
 import routeappjpa.Coordinate;
 import routeappjpa.Coordinate_Route;
 import routeappjpa.Direction;
-import routeappjpa.Type;
 
 /**
  *
