@@ -36,7 +36,7 @@ public class CoordinateFacadeREST {
     
     @GET
     @Path("direction/type/{code}/{type}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Direction> findDirectionsByType(@PathParam("code") String code, @PathParam("type") String type) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         List<Direction> directions = null;
@@ -51,7 +51,7 @@ public class CoordinateFacadeREST {
     
     @GET
     @Path("direction/route/{code}/{route}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Direction> findDirectionsByRoute(@PathParam("code") String code, @PathParam("route") String routeId) {
         ejbSession.checkSession(code,null);
         List<Direction> directions = null;
@@ -67,7 +67,7 @@ public class CoordinateFacadeREST {
     
     @PUT
     @Path("direction/visited/{code}/{latitude}/{longitude}")
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void markDestinationVisited(@PathParam("code") String code, @PathParam("latitude") Double latitude, @PathParam("longitude") Double longitude, Coordinate_Route visited) {
         ejbSession.checkSession(code,Privilege.USER);
         try {

@@ -42,7 +42,7 @@ public class UserFacadeREST {
     private SessionManagerLocal ejbSession;
     
     @POST
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(User entity) {
         try {
             ejb.createUser(entity);
@@ -53,7 +53,7 @@ public class UserFacadeREST {
 
     @PUT
     @Path("{code}")
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("code") String code, User entity) throws UserNotFoundException{
         ejbSession.checkSession(code,null);
         try {
@@ -85,7 +85,7 @@ public class UserFacadeREST {
 
     @GET
     @Path("{code}/{id}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User find(@PathParam("code") String code, @PathParam("id") Long id) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
@@ -100,7 +100,7 @@ public class UserFacadeREST {
     
     @GET
     @Path("forgottenpasswd/{email}/{login}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) {
         try {
             ejb.forgottenpasswd(email, login);
@@ -113,7 +113,7 @@ public class UserFacadeREST {
     
     @GET
     @Path("login/{code}/{login}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findAccountByLogin(@PathParam("code") String code, @PathParam("login") String login) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
@@ -126,7 +126,7 @@ public class UserFacadeREST {
     
     @GET
     @Path("privilege/{code}/{privilege}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findByPrivilege(@PathParam("code") String code, @PathParam("privilege") String privilege) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         List<User> users = ejb.findByPrivilege(privilege);
@@ -135,7 +135,7 @@ public class UserFacadeREST {
 
     @GET
     @Path("{code}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findAll(@PathParam("code") String code) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         return ejb.findAll();
@@ -143,7 +143,7 @@ public class UserFacadeREST {
     
     @POST
     @Path("email/{code}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public String emailConfirmation(@PathParam("code") String code, User entity) {
         ejbSession.checkSession(code,null);
         try {
