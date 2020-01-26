@@ -32,6 +32,7 @@ import routeappjpa.Privilege;
  *
  * @author Jon Calvo Gaminde
  */
+
 @Path("routeappjpa.coordinate")
 public class CoordinateFacadeREST {
     @EJB
@@ -76,19 +77,9 @@ public class CoordinateFacadeREST {
         }
     }*/
 
-    /*@GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML})
-    public Coordinate find(@PathParam("id") Long id) {
-        try {
-            return ejb.findCoordinate(id);
-        } catch (FindException ex) {
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
-        }
-    }
+    
 
-    @GET
+    /*@GET
     @Path("type/{type}/{code}")
     @Produces({MediaType.APPLICATION_XML})
     public List<Coordinate> findByType(@PathParam("type") String type, @PathParam("code") String code) {
@@ -102,6 +93,19 @@ public class CoordinateFacadeREST {
         }
         return coords;
     }*/
+    
+    @GET
+    @Path("{code}/{id}")
+    @Produces({MediaType.APPLICATION_XML})
+    public Coordinate find(@PathParam("code") String code, @PathParam("id") Long id) {
+        ejbSession.checkSession(code,null);
+        try {
+            return ejb.findCoordinate(id);
+        } catch (FindException ex) {
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
+    }
 	
     @GET
     @Path("direction/type/{code}/{type}")
@@ -118,6 +122,7 @@ public class CoordinateFacadeREST {
         return directions;
     }
     
+   
     @GET
     @Path("direction/route/{code}/{route}")
     @Produces({MediaType.APPLICATION_XML})

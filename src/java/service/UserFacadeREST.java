@@ -23,6 +23,8 @@ import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -38,7 +40,6 @@ import routeappjpa.User;
  *
  * @author Daira Eguzkiza
  */
-@Stateless
 @Path("routeappjpa.user")
 public class UserFacadeREST {
 
@@ -74,7 +75,15 @@ public class UserFacadeREST {
     @Path("login")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Session login(User user) throws BadPasswordException, UserNotFoundException {
-        return ejb.login(user);
+        try {
+            return ejb.login(user);
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new NotFoundException(ex.getMessage());
+        } catch (BadPasswordException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).severe(ex.getMessage());
+            throw new NotAuthorizedException(ex.getMessage());
+        }
     }
 
 

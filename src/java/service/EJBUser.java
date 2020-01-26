@@ -111,6 +111,8 @@ public class EJBUser<T> implements EJBUserLocal {
             }else{
                 throw new BadPasswordException("The data you've entered isn't correct.");
             }
+        }catch(BadPasswordException e){
+            throw e;
         }catch(Exception e){
             throw new UserNotFoundException(e.getMessage());
         }

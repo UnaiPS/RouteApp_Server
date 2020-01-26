@@ -42,9 +42,7 @@ public class EJBRouteManager implements RouteManagerLocal{
             Set<Direction> directions = fullRoute.getDirections();
             em.persist(route);
             for(Coordinate_Route segment : fullRoute.getRoute().getCoordinates()) {
-                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 segment.setRoute(findRoute(route.getId()));
-                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 ejbCoordinate.createCoordinateRoute(segment);
             }
             for (Direction direction : directions) {

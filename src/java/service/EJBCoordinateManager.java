@@ -82,7 +82,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
             }
             return id;
         }catch(Exception e){
-            throw new CreateException(e.getMessage());
+            throw new CreateException(e.getMessage()+"Id es: "+coordinate.getId());
         }
         
     }
@@ -157,7 +157,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         try{
             direction.setCoordinate(findCoordinate(getIdByData(direction.getCoordinate())));
             em.createNamedQuery("findDirectionByCoordinate").setParameter("coordinate",direction.getCoordinate()).getSingleResult();
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe("Entity already exists.");
+            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe("Direction already exists.");
             
         }catch(NoResultException e){
             em.persist(direction);
@@ -172,6 +172,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     public void createCoordinateRoute(Coordinate_Route segment) throws CreateException {
         try {
             segment.getCoordinate().setId(createCoordinate(segment.getCoordinate()));
+            segment.setCoordinate(findCoordinate(segment.getCoordinate().getId()));
             em.persist(segment);
         } catch (Exception e) {
             throw new CreateException(e.getMessage());
