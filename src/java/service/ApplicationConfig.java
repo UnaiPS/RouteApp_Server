@@ -35,7 +35,6 @@ public class ApplicationConfig extends Application {
         resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider.class);
         resources.add(service.CoordinateFacadeREST.class);
         resources.add(service.RouteFacadeREST.class);
-        resources.add(service.SessionFacadeREST.class);
         resources.add(service.UserFacadeREST.class);
     }
     

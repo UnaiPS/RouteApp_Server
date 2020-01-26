@@ -63,10 +63,10 @@ public class EncoderDecoderEmail {
 			byte[] combined = concatArrays(iv, encodedMessage);
                         String path = null;
                         if(tipo == 1){
-                            path = "..\\emailencoding\\Email.dat";
+                            path = "../emailencoding/Email.dat";
 
                         }else{
-                            path = "..\\emailencoding\\ContraEmail.dat";
+                            path = "../emailencoding/ContraEmail.dat";
                         }
                         fileWriter(this.getClass().getResource(path).getFile(),combined);
 			cifrado = new String(encodedMessage);
@@ -90,10 +90,10 @@ public class EncoderDecoderEmail {
                 byte[] fileContent;
                 String path = null;
 		if(tipo == 1){
-                    path = "..\\emailencoding\\Email.dat";
+                    path = "../emailencoding/Email.dat";
 
                 }else{
-                    path = "..\\emailencoding\\ContraEmail.dat";
+                    path = "../emailencoding/ContraEmail.dat";
                 }
                 fileContent = fileReader(this.getClass().getResource(path).getFile());
 		KeySpec keySpec;

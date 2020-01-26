@@ -8,13 +8,8 @@ package service;
 import encryption.Decrypt;
 import exceptions.CreateException;
 import exceptions.DeleteException;
-import exceptions.FindException;
-import exceptions.UpdateException;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -25,12 +20,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.ForbiddenException;
-import routeappjpa.Coordinate;
-import routeappjpa.Coordinate_Route;
-import routeappjpa.Direction;
 import routeappjpa.Privilege;
 import routeappjpa.Session;
-import routeappjpa.Type;
 import routeappjpa.User;
 
 /**
@@ -56,14 +47,14 @@ public class EJBSessionManager implements SessionManagerLocal{
                 } catch(Exception e) {
                     throw new DeleteException(e.getMessage());
                 }
-                throw new NoResultException("The user has been inactive for " + MINUTES + " minutes. Creating new Session.");
+                throw new NoResultException("The user has been inactive for " + MINUTES + " minutes");
             } else {
                 session.setLastAction(Date.from(Instant.now()));
                 em.merge(session);
                 em.flush();
             }
         } catch (NoResultException e) {
-            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, e.getLocalizedMessage());
+            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, e.getLocalizedMessage() + ". Creating a new Session.");
             session = new Session();
             session.setLogged(user);
             session.setCode(createCode());
@@ -90,13 +81,15 @@ public class EJBSessionManager implements SessionManagerLocal{
                 millis = Long.parseLong(encryptSession.substring(6));
 
             }catch (Exception ex){
-                throw new BadRequestException(ex.getMessage());
+                throw new BadRequestException("Malformed session code.");
             }
             Session session = (Session) em.createNamedQuery("findSessionByCode")
                 .setParameter("code", code).getSingleResult();
             long lastAction = session.getLastAction().getTime()-999L;
             if (lastAction > millis || millis > Instant.now().toEpochMilli()) {
-                throw new NoResultException();
+                throw new NoResultException("Invalid code.");
+            } else if (lastAction + MINUTES*60000 < Instant.now().toEpochMilli()) {
+                throw new NoResultException("User has been inactive for too long.");
             } else if (requiredPrivilege != null && !session.getLogged().getPrivilege().equals(requiredPrivilege)) {
                 throw new ForbiddenException("Wrong user privilege.");
             } else {
@@ -106,8 +99,10 @@ public class EJBSessionManager implements SessionManagerLocal{
                 em.flush();
             }
         } catch (NoResultException e) {
-            throw new NotAuthorizedException("Invalid code.");
+            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, "HTTP request denied. Reason: " + e.getMessage());
+            throw new NotAuthorizedException(e.getMessage());
         } catch (ForbiddenException | BadRequestException e) {
+            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, "HTTP request denied. Reason: " + e.getMessage());
             throw e;
         }catch(Exception e){
             throw new InternalServerErrorException(e.getMessage());

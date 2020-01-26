@@ -39,7 +39,7 @@ public class RouteFacadeREST {
     
     @POST
     @Path("{code}")
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(@PathParam("code") String code, FullRoute fullRoute) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
@@ -52,7 +52,7 @@ public class RouteFacadeREST {
 
     @PUT
     @Path("{code}")
-    @Consumes({MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("code") String code, Route route) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         Logger LOGGER = Logger
@@ -80,7 +80,7 @@ public class RouteFacadeREST {
 
     @GET
     @Path("{code}/{id}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Route find(@PathParam("code") String code, @PathParam("id") Long id) {
         ejbSession.checkSession(code,null);
         try {
@@ -93,7 +93,7 @@ public class RouteFacadeREST {
 
     @GET
     @Path("{code}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Route> findAll(@PathParam("code") String code) {
         ejbSession.checkSession(code,null);
         try {
@@ -107,7 +107,7 @@ public class RouteFacadeREST {
 
     @GET
     @Path("assignedTo/{code}/{id}")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Route> findByAssignedTo(@PathParam("code") String code, @PathParam("id") Long userId) {
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {

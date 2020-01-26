@@ -42,7 +42,9 @@ public class EJBRouteManager implements RouteManagerLocal{
             Set<Direction> directions = fullRoute.getDirections();
             em.persist(route);
             for(Coordinate_Route segment : fullRoute.getRoute().getCoordinates()) {
+                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 segment.setRoute(findRoute(route.getId()));
+                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 ejbCoordinate.createCoordinateRoute(segment);
             }
             for (Direction direction : directions) {
@@ -58,7 +60,6 @@ public class EJBRouteManager implements RouteManagerLocal{
     @Override
     public void updateRoute(Route route) throws EdittingException{
         try{
-            //Logger.getLogger(EJBRouteManager.class.getName()).severe(fullRoute.getRoute().getCoordinates().toArray()[0].toString());
             em.merge(route);
             em.flush();
         }catch(Exception e){
