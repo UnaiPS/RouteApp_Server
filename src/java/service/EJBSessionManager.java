@@ -85,7 +85,8 @@ public class EJBSessionManager implements SessionManagerLocal{
             }
             Session session = (Session) em.createNamedQuery("findSessionByCode")
                 .setParameter("code", code).getSingleResult();
-            long lastAction = session.getLastAction().getTime()-999L;
+            long lastAction = session.getLastAction().getTime()-3000L;
+            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, lastAction + " " + millis + " " + Instant.now().toEpochMilli());
             if (lastAction > millis || millis > Instant.now().toEpochMilli()) {
                 throw new NoResultException("Invalid code.");
             } else if (lastAction + MINUTES*60000 < Instant.now().toEpochMilli()) {
