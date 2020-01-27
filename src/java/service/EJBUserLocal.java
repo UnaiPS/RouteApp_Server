@@ -11,6 +11,7 @@ import exceptions.EdittingException;
 import exceptions.CreateException;
 import exceptions.DoesntMatchException;
 import exceptions.EmailException;
+import exceptions.FindException;
 import exceptions.UserNotFoundException;
 import java.util.List;
 import javax.ejb.Local;
@@ -29,10 +30,10 @@ public interface EJBUserLocal {
     public void removeUser(Long id) throws DeleteException;
     public User find(Long id) throws UserNotFoundException;
     public User findAccountByLogin(String login) throws UserNotFoundException;
-    public List<User> findByPrivilege(String privilege);
-    public List<User> findAll();
+    public List<User> findByPrivilege(String privilege) throws FindException;
+    public List<User> findAll() throws FindException ;
     public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException;
     public Session login(User user) throws BadPasswordException, UserNotFoundException;
 
-    public String emailConfirmation(User user);
+    public String emailConfirmation(User user) throws EmailException;
 }

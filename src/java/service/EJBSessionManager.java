@@ -10,7 +10,6 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import java.time.Instant;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -34,9 +33,11 @@ public class EJBSessionManager implements SessionManagerLocal{
     @PersistenceContext(unitName = "RouteJPAPU")
     private EntityManager em;
     private final int MINUTES = 30;
+    private Logger LOGGER = Logger.getLogger("EJBSessionManager");
 
     @Override
     public Session getSession(User user) throws CreateException, DeleteException{
+        LOGGER.info("Preparing the session");
         Session session = null;
         try{
             session = (Session) em.createNamedQuery("getSessionCode")
@@ -54,7 +55,7 @@ public class EJBSessionManager implements SessionManagerLocal{
                 em.flush();
             }
         } catch (NoResultException e) {
-            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, e.getLocalizedMessage() + ". Creating a new Session.");
+            LOGGER.info(e.getLocalizedMessage() + ". Creating a new Session.");
             session = new Session();
             session.setLogged(user);
             session.setCode(createCode());
@@ -65,12 +66,13 @@ public class EJBSessionManager implements SessionManagerLocal{
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }
-
+        LOGGER.info("Session prepared");
         return session;
     }
 
     @Override
     public User checkSession(String encryptSession, Privilege requiredPrivilege) throws InternalServerErrorException,NotAuthorizedException, ForbiddenException {
+        LOGGER.info("Checking session");
         User user = null;
         String code = null;
         Long millis = null;
@@ -86,7 +88,6 @@ public class EJBSessionManager implements SessionManagerLocal{
             Session session = (Session) em.createNamedQuery("findSessionByCode")
                 .setParameter("code", code).getSingleResult();
             long lastAction = session.getLastAction().getTime()-3000L;
-            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, lastAction + " " + millis + " " + Instant.now().toEpochMilli());
             if (lastAction > millis || millis > Instant.now().toEpochMilli()) {
                 throw new NoResultException("Invalid code.");
             } else if (lastAction + MINUTES*60000 < Instant.now().toEpochMilli()) {
@@ -100,14 +101,15 @@ public class EJBSessionManager implements SessionManagerLocal{
                 em.flush();
             }
         } catch (NoResultException e) {
-            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, "HTTP request denied. Reason: " + e.getMessage());
+            LOGGER.severe("HTTP request denied. Reason: " + e.getMessage());
             throw new NotAuthorizedException(e.getMessage());
         } catch (ForbiddenException | BadRequestException e) {
-            Logger.getLogger(EJBSessionManager.class.getName()).log(Level.SEVERE, "HTTP request denied. Reason: " + e.getMessage());
+            LOGGER.severe("HTTP request denied. Reason: " + e.getMessage());
             throw e;
         }catch(Exception e){
             throw new InternalServerErrorException(e.getMessage());
         }
+        LOGGER.info("The session is valid");
         return user;
     }
     
