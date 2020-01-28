@@ -87,8 +87,8 @@ public class EJBSessionManager implements SessionManagerLocal{
             }
             Session session = (Session) em.createNamedQuery("findSessionByCode")
                 .setParameter("code", code).getSingleResult();
-            long lastAction = session.getLastAction().getTime()-30000L;
-            if (lastAction > millis || millis > Instant.now().toEpochMilli()) {
+            long lastAction = session.getLastAction().getTime()-15000L;
+            if (lastAction > millis || millis > Instant.now().toEpochMilli()+15000L) {
                 throw new NoResultException("Invalid code.");
             } else if (lastAction + MINUTES*60000 < Instant.now().toEpochMilli()) {
                 throw new NoResultException("User has been inactive for too long.");
