@@ -62,7 +62,7 @@ public class RouteFacadeREST {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void edit(@PathParam("code") String code, Route route) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Edit route");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code,null);
         try {
             ejb.updateRoute(route);
             LOGGER.info("Request completed: Edit route");
@@ -124,7 +124,7 @@ public class RouteFacadeREST {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Route> findByAssignedTo(@PathParam("code") String code, @PathParam("id") Long userId) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Find routes by assigned user");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code,null);
         try {
             List<Route> routes = ejb.findByAssignedUser(userId);
             LOGGER.info("Request completed: Find routes by assigned user");
