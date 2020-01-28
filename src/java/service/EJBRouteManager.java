@@ -35,22 +35,25 @@ public class EJBRouteManager implements RouteManagerLocal{
     @EJB
     private CoordinateManagerLocal ejbCoordinate;
 
+    private Logger LOGGER = Logger.getLogger("EJBRouteManager");
+    
     @Override
     public void createRoute(FullRoute fullRoute) throws CreateException{
         try{
             Route route = fullRoute.getRoute();
             Set<Direction> directions = fullRoute.getDirections();
             em.persist(route);
+            LOGGER.info("Created base route");
             for(Coordinate_Route segment : fullRoute.getRoute().getCoordinates()) {
-                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 segment.setRoute(findRoute(route.getId()));
-                Logger.getLogger(EJBRouteManager.class.getName()).log(Level.SEVERE, segment.toString());
                 ejbCoordinate.createCoordinateRoute(segment);
             }
+            LOGGER.info("Added segments");
             for (Direction direction : directions) {
                 ejbCoordinate.createCoordinate(direction.getCoordinate());
                 ejbCoordinate.createDirection(direction);
             }
+            LOGGER.info("Added directions");
         }catch(Exception e){
             throw new CreateException(e.getMessage());
         }

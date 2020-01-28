@@ -32,13 +32,13 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
 
     @PersistenceContext(unitName = "RouteJPAPU")
     private EntityManager em;
+    private Logger LOGGER = Logger.getLogger("EJBCoordinateManager");
 
     @Override
     public List<Direction> findDirectionsByType(String type) throws FindException{
         List<Direction> directions = null;
         try {
             directions = em.createNamedQuery("findDirectionsByType").setParameter("type",Type.valueOf(type)).getResultList();
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe(directions.toString());
         } catch (Exception e) {
             throw new FindException(e.getMessage());
         }
@@ -106,7 +106,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
                     em.remove(em.merge(direction));
 
                 } catch (NoResultException e) {
-                    Logger.getLogger(EJBCoordinateManager.class.getName()).log(Level.SEVERE, "No direction exists for this coordinate: " + coordinate.toString());
+                    LOGGER.info("No direction exists for this coordinate: " + coordinate.toString());
                 }
             }
             em.remove(em.merge(coordinate));
@@ -157,7 +157,7 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
         try{
             direction.setCoordinate(findCoordinate(getIdByData(direction.getCoordinate())));
             em.createNamedQuery("findDirectionByCoordinate").setParameter("coordinate",direction.getCoordinate()).getSingleResult();
-            Logger.getLogger(CoordinateFacadeREST.class.getName()).severe("Direction already exists.");
+            LOGGER.info("Direction already exists.");
             
         }catch(NoResultException e){
             em.persist(direction);

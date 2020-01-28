@@ -12,10 +12,13 @@ import exceptions.EdittingException;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -37,15 +40,19 @@ public class RouteFacadeREST {
     @EJB
     private SessionManagerLocal ejbSession;
     
+    private Logger LOGGER = Logger.getLogger("RouteFacadeREST");
+    
     @POST
     @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(@PathParam("code") String code, FullRoute fullRoute) {
+    public void create(@PathParam("code") String code, FullRoute fullRoute) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+        LOGGER.info("HTTP request received: Create route");
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             ejb.createRoute(fullRoute);
+            LOGGER.info("Request completed: Create route");
         } catch (CreateException ex) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
@@ -53,27 +60,28 @@ public class RouteFacadeREST {
     @PUT
     @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("code") String code, Route route) {
+    public void edit(@PathParam("code") String code, Route route) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+        LOGGER.info("HTTP request received: Edit route");
         ejbSession.checkSession(code,Privilege.ADMIN);
-        Logger LOGGER = Logger
-            .getLogger("service.RouteFacadeRest");
-        LOGGER.warning("Server: "+route.toString());
         try {
             ejb.updateRoute(route);
+            LOGGER.info("Request completed: Edit route");
         } catch (EdittingException ex) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
 
     @DELETE
     @Path("{code}/{id}")
-    public void remove(@PathParam("code") String code, @PathParam("id") Long id) {
+    public void remove(@PathParam("code") String code, @PathParam("id") Long id) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+        LOGGER.info("HTTP request received: Delete route");
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
             ejb.removeRoute(id);
+            LOGGER.info("Request completed: Delete route");
         } catch (DeleteException ex) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
@@ -81,12 +89,15 @@ public class RouteFacadeREST {
     @GET
     @Path("{code}/{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Route find(@PathParam("code") String code, @PathParam("id") Long id) {
+    public Route find(@PathParam("code") String code, @PathParam("id") Long id) throws InternalServerErrorException, NotAuthorizedException, BadRequestException {
+        LOGGER.info("HTTP request received: Find route");
         ejbSession.checkSession(code,null);
         try {
-            return ejb.findRoute(id);
+            Route route = ejb.findRoute(id);
+            LOGGER.info("Request completed: Find route");
+            return route;
         } catch (FindException ex) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(ex.getMessage());
+            LOGGER.severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
@@ -94,12 +105,15 @@ public class RouteFacadeREST {
     @GET
     @Path("{code}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Route> findAll(@PathParam("code") String code) {
+    public List<Route> findAll(@PathParam("code") String code)  throws InternalServerErrorException, NotAuthorizedException, BadRequestException {
+        LOGGER.info("HTTP request received: Find all routes");
         ejbSession.checkSession(code,null);
         try {
-            return ejb.findAllRoutes();
+            List<Route> routes = ejb.findAllRoutes();
+            LOGGER.info("Request completed: Find all routes");
+            return routes;
         } catch (Exception e) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());
+            LOGGER.severe(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
         
@@ -108,12 +122,15 @@ public class RouteFacadeREST {
     @GET
     @Path("assignedTo/{code}/{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Route> findByAssignedTo(@PathParam("code") String code, @PathParam("id") Long userId) {
+    public List<Route> findByAssignedTo(@PathParam("code") String code, @PathParam("id") Long userId) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+        LOGGER.info("HTTP request received: Find routes by assigned user");
         ejbSession.checkSession(code,Privilege.ADMIN);
         try {
-            return ejb.findByAssignedUser(userId);
+            List<Route> routes = ejb.findByAssignedUser(userId);
+            LOGGER.info("Request completed: Find routes by assigned user");
+            return routes;
         } catch (Exception e) {
-            Logger.getLogger(RouteFacadeREST.class.getName()).severe(e.getMessage());
+            LOGGER.severe(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
         
