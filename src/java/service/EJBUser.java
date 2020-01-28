@@ -17,6 +17,7 @@ import exceptions.FindException;
 import exceptions.UserNotFoundException;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -41,6 +42,10 @@ public class EJBUser<T> implements EJBUserLocal {
     private SessionManagerLocal ejbSession;
     
     private Logger LOGGER = Logger.getLogger("EJBUser");
+    
+    ResourceBundle properties = ResourceBundle.getBundle("service.serverconfig");
+    private final String HOST = properties.getString("smtpHost");
+    private final String PORT = properties.getString("smtpPort");
 
 
     @Override
@@ -136,9 +141,10 @@ public class EJBUser<T> implements EJBUserLocal {
     @Override
     public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
         try {
+            
             User user = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
             if(user.getEmail().equals(email)){
-                EmailSender es = new EmailSender("smtp.gmail.com", "587");
+                EmailSender es = new EmailSender(HOST, PORT);
                 String nuevaContra = createCode(10);
                 
                 user.setPassword(Hasher.encrypt(nuevaContra));
@@ -160,7 +166,7 @@ public class EJBUser<T> implements EJBUserLocal {
     public String emailConfirmation(User user) throws EmailException {
         String code = createCode(4);
         try{
-            EmailSender es = new EmailSender("smtp.gmail.com", "587");           
+            EmailSender es = new EmailSender(HOST, PORT);           
             es.sendEmail(user.getEmail(), code, 1);
             LOGGER.info("Identity confirmation email sended");
         } catch (Exception ex) {

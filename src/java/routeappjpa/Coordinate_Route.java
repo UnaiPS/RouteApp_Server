@@ -5,6 +5,7 @@
  */
 package routeappjpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.*;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Coordinate_Route implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
+    @JsonIgnore
     private Coordinate_RouteId id = new Coordinate_RouteId();
     @MapsId("routeId")
     @ManyToOne
@@ -42,6 +44,7 @@ public class Coordinate_Route implements Serializable {
      * @return the route
      */
     @XmlTransient
+    @JsonIgnore
     public Route getRoute() {
         return route;
     }
