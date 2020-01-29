@@ -141,6 +141,7 @@ public class UserFacadeREST {
             throw new InternalServerErrorException(ex.getMessage());
         } catch (DoesntMatchException ex) {
             LOGGER.severe(ex.getMessage());
+            throw new NotFoundException(ex.getMessage());
         }
     }
     
