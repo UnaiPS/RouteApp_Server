@@ -33,7 +33,7 @@ public interface CoordinateManagerLocal {
 
     public Long getIdByData(Coordinate coordinate) throws FindException;
 
-    public void updateCoordinateRoute (Coordinate_Route visited, Double latitude, Double longitude) throws UpdateException;
+    public Long updateCoordinateRoute (Coordinate gps, Long routeId, Long coordinateId) throws UpdateException;
     
     public List<Direction> findDirectionsByType(String type) throws FindException;
     
