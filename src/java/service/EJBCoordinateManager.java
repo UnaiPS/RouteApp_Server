@@ -11,6 +11,7 @@ import exceptions.FindException;
 import exceptions.UpdateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -57,16 +58,16 @@ public class EJBCoordinateManager implements CoordinateManagerLocal{
     }
     
     @Override
-    public void updateCoordinateRoute (Coordinate_Route visited, Double latitude, Double longitude) throws UpdateException{
+    public Long updateCoordinateRoute (Coordinate gps, Long routeId, Long coordinateId) throws UpdateException {
         try{
-            Coordinate gps = new Coordinate();
-            gps.setLatitude(latitude);
-            gps.setLongitude(longitude);
-            gps.setType(Type.GPS);
+            List<Coordinate_Route> coordinate_routes = null;
             gps.setId(createCoordinate(gps));
+            coordinate_routes = em.createNamedQuery("findCoordinateRoutesByCoordinateId").setParameter("id",coordinateId).getResultList();
+            Coordinate_Route visited = coordinate_routes.stream().filter(cr->cr.getId().getRouteId()== routeId.longValue()).findAny().get();
             visited.setVisited(gps.getId());
             em.merge(visited);
             em.flush();
+            return gps.getId();
         }catch(Exception e){
             throw new UpdateException(e.getMessage());
         }

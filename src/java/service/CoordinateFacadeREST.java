@@ -92,14 +92,16 @@ public class CoordinateFacadeREST {
 	
     
     @PUT
-    @Path("direction/visited/{code}/{latitude}/{longitude}")
+    @Path("direction/visited/{code}/{routeId}/{coordinateId}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void markDestinationVisited(@PathParam("code") String code, @PathParam("latitude") Double latitude, @PathParam("longitude") Double longitude, Coordinate_Route visited) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+    public Long markDestinationVisited(@PathParam("code") String code, @PathParam("routeId") Long routeId, @PathParam("coordinateId") Long coordinateId, Coordinate gps) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Mark destination as visited");
         ejbSession.checkSession(code,Privilege.USER);
         try {
-            ejb.updateCoordinateRoute(visited, latitude, longitude);
+            Long id;
+            id = ejb.updateCoordinateRoute(gps, routeId, coordinateId);
             LOGGER.info("Request completed: Mark destination as visited");
+            return id;
         } catch (UpdateException ex) {
             LOGGER.severe(ex.getMessage());
             throw new InternalServerErrorException(ex.getMessage());
