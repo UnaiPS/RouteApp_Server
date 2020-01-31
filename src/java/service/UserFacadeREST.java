@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import exceptions.BadPasswordException;
@@ -35,6 +30,7 @@ import routeappjpa.Session;
 import routeappjpa.User;
 
 /**
+ * The REST methods of the user entity.
  *
  * @author Daira Eguzkiza
  */
@@ -45,12 +41,12 @@ public class UserFacadeREST {
     private EJBUserLocal ejb;
     @EJB
     private SessionManagerLocal ejbSession;
-    
+
     private Logger LOGGER = Logger.getLogger("UserFacadeREST");
-    
+
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(User entity) throws InternalServerErrorException{
+    public void create(User entity) throws InternalServerErrorException {
         LOGGER.info("HTTP request received: Create user");
         try {
             ejb.createUser(entity);
@@ -61,12 +57,24 @@ public class UserFacadeREST {
         }
     }
 
+    /**
+     * A method that edits a user.
+     *
+     * @param code The Session code of the client.
+     * @param entity The user to edit.
+     * @throws InternalServerErrorException An exception thrown if the request
+     * was unsuccessful.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     */
     @PUT
     @Path("{code}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("code") String code, User entity) throws InternalServerErrorException, NotAuthorizedException, BadRequestException{
+    public void edit(@PathParam("code") String code, User entity) throws InternalServerErrorException, NotAuthorizedException, BadRequestException {
         LOGGER.info("HTTP request received: Edit user");
-        ejbSession.checkSession(code,null);
+        ejbSession.checkSession(code, null);
         try {
             ejb.editUser(entity);
             LOGGER.info("Request completed: Edit user");
@@ -75,8 +83,17 @@ public class UserFacadeREST {
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
-    
-    
+
+    /**
+     * A method that checks the login and password of a user and returns its
+     * session and user data.
+     *
+     * @param user The user with the login and password
+     * @return The session of the user, and its data.
+     * @throws NotFoundException An exception thrown if the login was not found.
+     * @throws NotAuthorizedException An exception thrown if the password is
+     * wrong.
+     */
     @POST
     @Path("login")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -95,12 +112,25 @@ public class UserFacadeREST {
         }
     }
 
-
+    /**
+     * A method that deletes a user.
+     *
+     * @param code The Session code of the client.
+     * @param id The id of the user.
+     * @throws InternalServerErrorException An exception thrown if the request
+     * was unsuccessful.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @DELETE
     @Path("{code}/{id}")
-    public void remove(@PathParam("code") String code, @PathParam("id") Long id)throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
+    public void remove(@PathParam("code") String code, @PathParam("id") Long id) throws InternalServerErrorException, NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Delete user");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code, Privilege.ADMIN);
         try {
             ejb.removeUser(id);
             LOGGER.info("Request completed: Delete user");
@@ -110,12 +140,25 @@ public class UserFacadeREST {
         }
     }
 
+    /**
+     * A method that finds a user by id.
+     *
+     * @param code The Session code of the client.
+     * @param id The id of the user.
+     * @return The user with that id.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @GET
     @Path("{code}/{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User find(@PathParam("code") String code, @PathParam("id") Long id) throws NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Find user");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code, Privilege.ADMIN);
         try {
             User user = ejb.find(id);
             LOGGER.info("Request completed: Find user");
@@ -125,9 +168,20 @@ public class UserFacadeREST {
             return null;
         }
     }
-    
-    
-    
+
+    /**
+     * A method that sends the user a new password to the email.
+     *
+     * @param email The email of the user.
+     * @param login The login of the user.
+     * @throws InternalServerErrorException An exception thrown if the request
+     * was unsuccessful.
+     * @throws ForbiddenException An exception thrown if the password was
+     * changed recently.
+     * @throws NotAuthorizedException An exception thrown if the email and the
+     * login do not match.
+     * @throws NotFoundException An exception thrown if the user was not found.
+     */
     @GET
     @Path("forgottenpasswd/{email}/{login}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -150,15 +204,26 @@ public class UserFacadeREST {
             throw ex;
         }
     }
-    
-    
-    
+
+    /**
+     * A method that finds a user by login.
+     *
+     * @param code The Session code of the client.
+     * @param login The login of the user.
+     * @return The user with that login.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @GET
     @Path("login/{code}/{login}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findAccountByLogin(@PathParam("code") String code, @PathParam("login") String login) throws NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Find user by login");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code, Privilege.ADMIN);
         try {
             User user = ejb.findAccountByLogin(login);
             LOGGER.info("Request completed: Find user by login");
@@ -168,45 +233,84 @@ public class UserFacadeREST {
             return null;
         }
     }
-    
+
+    /**
+     * A method that finds all the users with a specific privilege level.
+     *
+     * @param code The Session code of the client.
+     * @param privilege The privilege of the users.
+     * @return The users with that privilege level.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @GET
     @Path("privilege/{code}/{privilege}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<User> findByPrivilege(@PathParam("code") String code, @PathParam("privilege") String privilege) throws NotAuthorizedException, BadRequestException, ForbiddenException{
+    public List<User> findByPrivilege(@PathParam("code") String code, @PathParam("privilege") String privilege) throws NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Find users by privilege");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code, Privilege.ADMIN);
         try {
             List<User> users = ejb.findByPrivilege(privilege);
             LOGGER.info("Request completed: Find users by privilege");
             return users;
-        }catch (FindException ex) {
+        } catch (FindException ex) {
             LOGGER.severe(ex.getMessage());
             return null;
         }
     }
 
+    /**
+     * A method that finds all the users.
+     *
+     * @param code The Session code of the client.
+     * @return All the users.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @GET
     @Path("{code}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findAll(@PathParam("code") String code) throws NotAuthorizedException, BadRequestException, ForbiddenException {
         LOGGER.info("HTTP request received: Find all users");
-        ejbSession.checkSession(code,Privilege.ADMIN);
+        ejbSession.checkSession(code, Privilege.ADMIN);
         try {
             List<User> users = ejb.findAll();
             LOGGER.info("Request completed: Find all users");
             return users;
-        }catch (FindException ex) {
+        } catch (FindException ex) {
             LOGGER.severe(ex.getMessage());
             return null;
         }
     }
-    
+
+    /**
+     * A method that send the user a code to the email and returns it hashed to
+     * the client for comparation.
+     *
+     * @param code The Session code of the client.
+     * @param entity The user who needs the code.
+     * @return The hashed code.
+     * @throws NotAuthorizedException An exception thrown if the code was
+     * invalid.
+     * @throws BadRequestException An exception thrown if the request was
+     * malformed.
+     * @throws ForbiddenException An exception thrown if the client has the
+     * wrong privilege.
+     */
     @POST
     @Path("email/{code}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public String emailConfirmation(@PathParam("code") String code, User entity) throws InternalServerErrorException, NotAuthorizedException, BadRequestException {
         LOGGER.info("HTTP request received: Email confirmation");
-        ejbSession.checkSession(code,null);
+        ejbSession.checkSession(code, null);
         try {
             String confirmation = ejb.emailConfirmation(entity);
             LOGGER.info("Request completed: Email confirmation");
@@ -216,5 +320,5 @@ public class UserFacadeREST {
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
-   
+
 }

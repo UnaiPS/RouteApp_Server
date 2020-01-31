@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routeappjpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,18 +9,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
+ * The entity for the coordinate_route.
  *
- * @author 2dam
+ * @author Jon Calvo Gaminde
  */
 @Entity
-@Table(name="coordinate_route", schema="routesdb")
+@Table(name = "coordinate_route", schema = "routesdb")
 @NamedQueries({
-    @NamedQuery(name="findCoordinateRoutesByCoordinateId",
-            query="SELECT cr FROM Coordinate_Route cr WHERE cr.id.coordinateId = :id"
+    @NamedQuery(name = "findCoordinateRoutesByCoordinateId",
+            query = "SELECT cr FROM Coordinate_Route cr WHERE cr.id.coordinateId = :id"
     )
 })
 @XmlRootElement
 public class Coordinate_Route implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     @JsonIgnore
@@ -40,67 +37,45 @@ public class Coordinate_Route implements Serializable {
     private Integer wayOrder;
     private Long visited;
 
-    /**
-     * @return the route
-     */
+    //Getters
     @XmlTransient
     @JsonIgnore
     public Route getRoute() {
         return route;
     }
 
-    /**
-     * @param route the route to set
-     */
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public Integer getOrder() {
+        return wayOrder;
+    }
+
+    public Long getVisited() {
+        return visited;
+    }
+
+    //Setters
+    public Coordinate_RouteId getId() {
+        return id;
+    }
+
     public void setRoute(Route route) {
         this.route = route;
 
     }
 
-    /**
-     * @return the coordinate
-     */
-    public Coordinate getCoordinate() {
-        return coordinate;
-    }
-
-    /**
-     * @param coordinate the coordinate to set
-     */
     public void setCoordinate(Coordinate coordinate) {
         this.coordinate = coordinate;
     }
 
-    /**
-     * @return the order
-     */
-    public Integer getOrder() {
-        return wayOrder;
-    }
-
-    /**
-     * @param order the order to set
-     */
     public void setOrder(Integer order) {
         this.wayOrder = order;
     }
 
-    /**
-     * @return the visited
-     */
-    public Long getVisited() {
-        return visited;
-    }
-
-    /**
-     * @param visited the visited to set
-     */
     public void setVisited(Long visited) {
         this.visited = visited;
-    }
-
-    public Coordinate_RouteId getId() {
-        return id;
     }
 
     public void setId(Coordinate_RouteId id) {
@@ -116,8 +91,6 @@ public class Coordinate_Route implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.visited);
         return hash;
     }
-
-    
 
     @Override
     public boolean equals(Object obj) {
@@ -148,5 +121,4 @@ public class Coordinate_Route implements Serializable {
         return "Coordinate_Route{" + "coordinate=" + coordinate + ", route=" + route + ", order=" + wayOrder + '}';
     }
 
-    
 }

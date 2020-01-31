@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
 
 /**
- *
+ * The server configuration class.
  * @author Unai Pérez Sánchez
  */
 @javax.ws.rs.ApplicationPath("webresources")
@@ -28,8 +23,6 @@ public class ApplicationConfig extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
-    //TODO
-    //Add all the REST
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
         resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider.class);
