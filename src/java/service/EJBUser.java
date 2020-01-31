@@ -15,6 +15,7 @@ import exceptions.CreateException;
 import exceptions.DoesntMatchException;
 import exceptions.FindException;
 import exceptions.UserNotFoundException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -22,7 +23,11 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import routeappjpa.Privilege;
 import routeappjpa.Session;
 import routeappjpa.User;
@@ -46,6 +51,7 @@ public class EJBUser<T> implements EJBUserLocal {
     ResourceBundle properties = ResourceBundle.getBundle("service.serverconfig");
     private final String HOST = properties.getString("smtpHost");
     private final String PORT = properties.getString("smtpPort");
+    private final long HOURS = Long.parseLong(properties.getString("restorePasswordCooldownHours"));
 
 
     @Override
@@ -139,24 +145,30 @@ public class EJBUser<T> implements EJBUserLocal {
         
     
     @Override
-    public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException{
+    public void forgottenpasswd(String email, String login) throws EmailException, DoesntMatchException, ForbiddenException, UserNotFoundException {
         try {
             
             User user = (User)em.createNamedQuery("findAccountByLogin").setParameter("login", login).getSingleResult();
             if(user.getEmail().equals(email)){
-                EmailSender es = new EmailSender(HOST, PORT);
-                String nuevaContra = createCode(10);
-                
-                user.setPassword(Hasher.encrypt(nuevaContra));
-                editUser(user);
-                es.sendEmail(email, nuevaContra, 0);
-                LOGGER.info("Password restoration email sended");
-            }else{
-                throw new DoesntMatchException("The login doesn't match with the email.");
+                if(user.getLastPasswordChange().getTime() + (HOURS*3600000) < Date.from(Instant.now()).getTime()) {
+                    EmailSender es = new EmailSender(HOST, PORT);
+                    String nuevaContra = createCode(10);
+
+                    user.setPassword(Hasher.encrypt(nuevaContra));
+                    editUser(user);
+                    es.sendEmail(email, nuevaContra, 0);
+                    LOGGER.info("Password restoration email sended");
+                } else {
+                    throw new ForbiddenException("The password was restored or changed in the last " + HOURS + " hours. Restore denegated.");
+                }
+            } else {
+                throw new DoesntMatchException("The login does not match with the email.");
             }
            
-        } catch (DoesntMatchException ex) {
+        } catch (DoesntMatchException | ForbiddenException ex) {
             throw ex;  
+        } catch (NoResultException ex) {
+            throw new UserNotFoundException("No user found with login: " + login);
         } catch (Exception ex) {
             throw new EmailException(ex.getMessage());
         }

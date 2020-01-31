@@ -10,6 +10,7 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,7 +33,8 @@ public class EJBSessionManager implements SessionManagerLocal{
 
     @PersistenceContext(unitName = "RouteJPAPU")
     private EntityManager em;
-    private final int MINUTES = 30;
+    private ResourceBundle properties = ResourceBundle.getBundle("service.serverconfig");
+    private final int MINUTES = Integer.parseInt(properties.getString("sessionMaxInactivityMinutes"));
     private Logger LOGGER = Logger.getLogger("EJBSessionManager");
 
     @Override

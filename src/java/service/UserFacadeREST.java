@@ -131,7 +131,7 @@ public class UserFacadeREST {
     @GET
     @Path("forgottenpasswd/{email}/{login}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) throws InternalServerErrorException {
+    public void forgottenpasswd(@PathParam("email") String email, @PathParam("login") String login) throws InternalServerErrorException, ForbiddenException, NotAuthorizedException, NotFoundException {
         LOGGER.info("HTTP request received: Restore password");
         try {
             ejb.forgottenpasswd(email, login);
@@ -141,7 +141,13 @@ public class UserFacadeREST {
             throw new InternalServerErrorException(ex.getMessage());
         } catch (DoesntMatchException ex) {
             LOGGER.severe(ex.getMessage());
-            throw new InternalServerErrorException(ex.getMessage());
+            throw new NotAuthorizedException(ex.getMessage());
+        } catch (UserNotFoundException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw new NotFoundException(ex.getMessage());
+        } catch (ForbiddenException ex) {
+            LOGGER.severe(ex.getMessage());
+            throw ex;
         }
     }
     
