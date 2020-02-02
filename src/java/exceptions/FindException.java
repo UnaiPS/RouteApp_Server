@@ -1,26 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package exceptions;
 
 /**
- *
+ * An Exception that is throwed in some server methods.
  * @author Unai Pérez Sánchez
  */
 public class FindException extends Exception {
 
     /**
-     * Creates a new instance of <code>FindException</code> without detail
-     * message.
+     * Creates a new instance of FindException without detail message.
      */
     public FindException() {
     }
 
     /**
-     * Constructs an instance of <code>FindException</code> with the specified
-     * detail message.
+     * Constructs an instance of with the specified detail message.
      *
      * @param msg the detail message.
      */

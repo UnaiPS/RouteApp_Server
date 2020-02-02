@@ -1,51 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routeappjpa;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.*;
 
 /**
+ * The entity of the ManyToMany id for the coordinate route.
  *
- * @author 2dam
+ * @author Jon Calvo Gaminde
  */
 @Embeddable
 public class Coordinate_RouteId implements Serializable {
     private Long routeId;
     private Long coordinateId;
 
+    //Constructors
     public Coordinate_RouteId() {
     }
 
-    /**
-     * @return the routeId
-     */
+    //Getters
     public Long getRouteId() {
         return routeId;
     }
 
-    /**
-     * @param routeId the routeId to set
-     */
-    public void setRouteId(Long routeId) {
-        this.routeId = routeId;
-    }
-
-    /**
-     * @return the coordinateId
-     */
     public Long getCoordinateId() {
         return coordinateId;
     }
 
-    /**
-     * @param coordinateId the coordinateId to set
-     */
+    //Setters
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
+    }
+
     public void setCoordinateId(Long coordinateId) {
         this.coordinateId = coordinateId;
     }

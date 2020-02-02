@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routeappjpa;
 
 import java.io.Serializable;
@@ -20,24 +15,26 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
+ * The entity for the route.
  *
  * @author Unai Pérez Sánchez
  */
 @NamedQueries({
     @NamedQuery(
             name = "findAllRoutes",
-            query = "SELECT r FROM Route r ORDER BY r.id"),
+            query = "SELECT r FROM Route r ORDER BY r.id")
+    ,
     @NamedQuery(
             name = "findByAssignedUser",
             query = "SELECT r FROM Route r WHERE r.assignedTo=:assignedTo")
 })
 @Entity
-@Table(name = "route",schema = "routesdb")
+@Table(name = "route", schema = "routesdb")
 @XmlRootElement
-public class Route implements Serializable{
+public class Route implements Serializable {
+
     private static final long serialVersionUID = 1L;
     /**
      * To identificate the route, the route will have an id of type Long
@@ -46,7 +43,7 @@ public class Route implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     /**
-     * The coordinates of the route with the attributes of all the points of the 
+     * The coordinates of the route with the attributes of all the points of the
      * route
      */
     @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
@@ -60,7 +57,6 @@ public class Route implements Serializable{
      * The information about the administrator that created the route
      */
     @ManyToOne
-    //@NotNull
     private User createdBy;
     /**
      * The delivery man/technician assigned to the route
@@ -78,193 +74,119 @@ public class Route implements Serializable{
     /**
      * If the route has been started or not
      */
-    //@NotNull
     private Boolean started;
     /**
      * If the Route has been ended or not
      */
-    //@NotNull
     private Boolean ended;
     /**
      * The mode of the route (FASTEST,SHORTEST,BALANCED)
      */
-    //@NotNull
     private Mode mode;
     /**
      * The type of the vehicle that the driver is going to use
      */
-    //@NotNull
     private TransportMode transportMode;
     /**
-     * When is creating the route if takes into account the traffic at the moment
+     * When is creating the route if takes into account the traffic at the
+     * moment
      */
-    //@NotNull
     private TrafficMode trafficMode;
 
-    /**
-     * @return the id
-     */
+    //Getters
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the coordinates
-     */
-    
     public Set<Coordinate_Route> getCoordinates() {
         return coordinates;
     }
 
-    /**
-     * @param coordinates the coordinates to set
-     */
-    public void setCoordinates(Set<Coordinate_Route> coordinates) {
-        this.coordinates = coordinates;
-    }
-    /**
-     * @return the createdBy
-     */
     public User getCreatedBy() {
         return createdBy;
     }
 
-    /**
-     * @param createdBy the createdBy to set
-     */
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    /**
-     * @return the assignedTo
-     */
     public User getAssignedTo() {
         return assignedTo;
     }
 
-    /**
-     * @param assignedTo the assignedTo to set
-     */
-    public void setAssignedTo(User assignedTo) {
-        this.assignedTo = assignedTo;
-    }
-
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the totalDistance
-     */
     public Double getTotalDistance() {
         return totalDistance;
     }
 
-    /**
-     * @param totalDistance the totalDistance to set
-     */
-    public void setTotalDistance(Double totalDistance) {
-        this.totalDistance = totalDistance;
-    }
-
-    /**
-     * @return the estimatedTime
-     */
     public Integer getEstimatedTime() {
         return estimatedTime;
     }
 
-    /**
-     * @param estimatedTime the estimatedTime to set
-     */
-    public void setEstimatedTime(Integer estimatedTime) {
-        this.estimatedTime = estimatedTime;
-    }
-
-    /**
-     * @return the started
-     */
     public Boolean getStarted() {
         return started;
     }
 
-    /**
-     * @param started the started to set
-     */
-    public void setStarted(Boolean started) {
-        this.started = started;
-    }
-
-    /**
-     * @return the ended
-     */
     public Boolean getEnded() {
         return ended;
     }
 
-    /**
-     * @param ended the ended to set
-     */
-    public void setEnded(Boolean ended) {
-        this.ended = ended;
-    }
-
-    /**
-     * @return the mode
-     */
     public Mode getMode() {
         return mode;
     }
 
-    /**
-     * @param mode the mode to set
-     */
-    public void setMode(Mode mode) {
-        this.mode = mode;
-    }
-
-    /**
-     * @return the transportMode
-     */
     public TransportMode getTransportMode() {
         return transportMode;
     }
 
-    /**
-     * @param transportMode the transportMode to set
-     */
-    public void setTransportMode(TransportMode transportMode) {
-        this.transportMode = transportMode;
-    }
-
-    /**
-     * @return the trafficMode
-     */
     public TrafficMode getTrafficMode() {
         return trafficMode;
     }
 
-    /**
-     * @param trafficMode the trafficMode to set
-     */
+    //Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCoordinates(Set<Coordinate_Route> coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setAssignedTo(User assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    public void setEstimatedTime(Integer estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
+
+    public void setEnded(Boolean ended) {
+        this.ended = ended;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public void setTransportMode(TransportMode transportMode) {
+        this.transportMode = transportMode;
+    }
+
     public void setTrafficMode(TrafficMode trafficMode) {
         this.trafficMode = trafficMode;
     }
@@ -322,6 +244,4 @@ public class Route implements Serializable{
         return "Route{" + "id=" + id + ", name=" + name + ", createdBy=" + createdBy + ", assignedTo=" + assignedTo + ", totalDistance=" + totalDistance + ", estimatedTime=" + estimatedTime + ", started=" + started + ", ended=" + ended + ", mode=" + mode + ", transportMode=" + transportMode + ", trafficMode=" + trafficMode + '}';
     }
 
-    
-    
 }

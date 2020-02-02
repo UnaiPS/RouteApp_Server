@@ -24,21 +24,20 @@ import javax.crypto.spec.SecretKeySpec;
 
 
 /**
- *
+ * The class that encrypts and decrypts the email credentials.
  * @author Daira Eguzkiza
  */
 public class EncoderDecoderEmail {
 
-	private static byte[] salt = "aj375hvngh!!8?JQ".getBytes(); // Exactamente 16 bytes
+	private static byte[] salt = "aj375hvngh!!8?JQ".getBytes(); // Exactly 16 bytes
 
 	/**
-	 * Cifra un texto con AES, modo CBC y padding PKCS5Padding (sim�trica) y lo
-	 * retorna
+	 * Encrypts the text with AES, CBC mode and PKCS5Padding padding and returns it
 	 * 
-	 * @param clave   La clave del usuario
-	 * @param mensaje El mensaje a cifrar
-         * @param tipo El mensaje que quiera leer; 1:email, 2:contraseña de éste.
-         * @return el mensaje cifrado
+	 * @param clave  The user password
+	 * @param mensaje he message to encrypt
+         * @param tipo The kind of message, 1:email 2:password
+         * @return The encrypted message
 	 */
 	public String cifrarTexto(String clave, String mensaje, int tipo) {
 		String cifrado = null;
@@ -46,20 +45,20 @@ public class EncoderDecoderEmail {
 		SecretKeyFactory secretKeyFactory = null;
 		try {
 
-			// Creamos un SecretKey usando la clave + salt
+                        // We create a SecretKey using the password + salt
 			keySpec = new PBEKeySpec(clave.toCharArray(), salt, 65536, 128); // AES-128
 			secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			byte[] key = secretKeyFactory.generateSecret(keySpec).getEncoded();
 			SecretKey privateKey = new SecretKeySpec(key, 0, key.length, "AES");
 
-			// Creamos un Cipher con el algoritmos que vamos a usar
+                        // We create a Cipher with the algorithm we gonna use.
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 			byte[] encodedMessage = cipher.doFinal(mensaje.getBytes()); // Mensaje cifrado !!!
 			byte[] iv = cipher.getIV(); // vector de inicialización por modo CBC
 
-			// Guardamos el mensaje codificado en el archivo correspondiente dependiendo
-                        // de si es email o contraseña: IV (16 bytes) + Mensaje
+			
+                        // We save the codified message depending if its an email o a password: IV (16 bytes) + Mensaje
 			byte[] combined = concatArrays(iv, encodedMessage);
                         String path = null;
                         if(tipo == 1){
@@ -78,12 +77,11 @@ public class EncoderDecoderEmail {
 	}
 
 	/**
-	 * Descifra un texto con AES, modo CBC y padding PKCS5Padding (sim�trica) y lo
-	 * retorna
+	 * Decrypts the text with AES, CBC mode and PKCS5Padding padding and returns it
 	 * 
-	 * @param clave La clave del usuario
-         * @param tipo Lo que se quiere desencriptar; 1:email, 2:contraseña de éste.
-         * @return el mensaje una vez sido desencriptado.
+	 * @param clave The user password
+         * @param tipo The kind of message, 1:email 2:password
+         * @return The decrypted mssage.
 	 */
 	public String descifrarTexto(String clave, int tipo) {
 		String desencriptado = null;
@@ -99,13 +97,13 @@ public class EncoderDecoderEmail {
 		KeySpec keySpec;
 		SecretKeyFactory secretKeyFactory = null;
 		try {
-			// Creamos un SecretKey usando la clave + salt
+			// We create a SecretKey using the password + salt
 			keySpec = new PBEKeySpec(clave.toCharArray(), salt, 65536, 128); // AES-128
 			secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			byte[] key = secretKeyFactory.generateSecret(keySpec).getEncoded();
 			SecretKey privateKey = new SecretKeySpec(key, 0, key.length, "AES");
 
-			// Creamos un Cipher con el algoritmos que vamos a usar
+			// We create a Cipher with the algorithm we gonna use.
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			IvParameterSpec ivParam = new IvParameterSpec(Arrays.copyOfRange(fileContent, 0, 16)); // La IV está aquí
 			cipher.init(Cipher.DECRYPT_MODE, privateKey, ivParam);
@@ -118,11 +116,11 @@ public class EncoderDecoderEmail {
 	}
 
 	/**
-	 * Retorna una concatenación de ambos arrays
+	 * Concats two arrays.
 	 * 
-	 * @param array1
-	 * @param array2
-	 * @return Concatenación de ambos arrays
+	 * @param array1 One array.
+	 * @param array2 The other array.
+	 * @return The concat of both arrays.
 	 */
 	private byte[] concatArrays(byte[] array1, byte[] array2) {
 		byte[] ret = new byte[array1.length + array2.length];
@@ -132,10 +130,10 @@ public class EncoderDecoderEmail {
 	}
 
 	/**
-	 * Escribe un fichero
+	 * Writes a file.
 	 * 
-	 * @param path Path del fichero
-	 * @param text Texto a escibir
+	 * @param path Path of the file
+	 * @param text Text to write
 	 */
 	private void fileWriter(String path, byte[] text) {
 		try (FileOutputStream fos = new FileOutputStream(path)) {
@@ -146,10 +144,10 @@ public class EncoderDecoderEmail {
 	}
 
 	/**
-	 * Retorna el contenido de un fichero
+	 * Reads a file
 	 * 
-	 * @param path Path del fichero
-	 * @return El texto del fichero
+	 * @param path Path of the file
+	 * @return Readed text
 	 */
 	private byte[] fileReader(String path) {
 		byte ret[] = null;
@@ -163,7 +161,7 @@ public class EncoderDecoderEmail {
 	}
 
 	/**
-	 * Main de la clase usada una sola vez para crear los archivos con las credenciales encriptadas.
+	 * Main method of the class, used one time.
 	 * 
 	 * @param args
 	 */

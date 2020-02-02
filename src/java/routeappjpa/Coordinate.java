@@ -1,37 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routeappjpa;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import routeappjpa.Type;
 
 /**
+ * The coordinate entity.
  *
  * @author Jon Calvo Gaminde
  */
 @Entity
-@Table(name="coordinate", schema="routesdb")
+@Table(name = "coordinate", schema = "routesdb")
 @NamedQueries({
-    @NamedQuery(name="findCoordinatesByType",
-            query="SELECT c FROM Coordinate c WHERE c.type = :type"
-    ),
-    @NamedQuery(name="getCoordinateIdByData",
-            query="SELECT c.id FROM Coordinate c WHERE c.latitude = :latitude AND c.longitude = :longitude AND c.type = :type"
+    @NamedQuery(name = "findCoordinatesByType",
+            query = "SELECT c FROM Coordinate c WHERE c.type = :type"
+    )
+    ,
+    @NamedQuery(name = "getCoordinateIdByData",
+            query = "SELECT c.id FROM Coordinate c WHERE c.latitude = :latitude AND c.longitude = :longitude AND c.type = :type"
     )
 })
 @XmlRootElement
 public class Coordinate implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotNull
     private Double latitude;
@@ -40,59 +36,36 @@ public class Coordinate implements Serializable {
     @NotNull
     private Type type;
 
-
-    /**
-     * @return the id
-     */
+    //Getters
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the latitude
-     */
     public Double getLatitude() {
         return latitude;
     }
 
-    /**
-     * @param latitude the latitude to set
-     */
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    /**
-     * @return the longitude
-     */
     public Double getLongitude() {
         return longitude;
     }
 
-    /**
-     * @param longitude the longitude to set
-     */
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    /**
-     * @return the type
-     */
     public Type getType() {
         return type;
     }
 
-    /**
-     * @param type the type to set
-     */
+    //Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public void setType(Type type) {
         this.type = type;
     }
@@ -106,8 +79,6 @@ public class Coordinate implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.type);
         return hash;
     }
-
-    
 
     @Override
     public boolean equals(Object obj) {

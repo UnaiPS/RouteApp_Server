@@ -1,14 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package routeappjpa;
 
 /**
+ * The enum for the type of a coordinate.
  *
- * @author 2dam
+ * @author Jon Calvo Gaminde
  */
 public enum Type {
-    WAYPOINT,ORIGIN,DESTINATION,GPS
+    /**
+     * A point inside the route.
+     */
+    WAYPOINT,
+    /**
+     * The staring point of the route.
+     */
+    ORIGIN,
+    /**
+     * A requiered point of the route.
+     */
+    DESTINATION,
+    /**
+     * The point of the worker.
+     */
+    GPS
 }
