@@ -19,6 +19,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "findCoordinateRoutesByCoordinateId",
             query = "SELECT cr FROM Coordinate_Route cr WHERE cr.id.coordinateId = :id"
     )
+    ,
+    @NamedQuery(name = "markCoordinateRouteVisitedById",
+            query = "UPDATE Coordinate_Route SET visited = (SELECT c.id FROM Coordinate c WHERE c.id = :gpsId) WHERE id = :id"
+    )
 })
 @XmlRootElement
 public class Coordinate_Route implements Serializable {

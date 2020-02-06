@@ -21,6 +21,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "getCoordinateIdByData",
             query = "SELECT c.id FROM Coordinate c WHERE c.latitude = :latitude AND c.longitude = :longitude AND c.type = :type"
     )
+    ,
+    @NamedQuery(name = "deleteCoordinateById",
+            query = "DELETE FROM Coordinate c WHERE c.id = :id"
+    )
 })
 @XmlRootElement
 public class Coordinate implements Serializable {

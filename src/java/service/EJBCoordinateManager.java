@@ -83,9 +83,10 @@ public class EJBCoordinateManager implements CoordinateManagerLocal {
             gps.setId(createCoordinate(gps));
             coordinate_routes = em.createNamedQuery("findCoordinateRoutesByCoordinateId").setParameter("id", coordinateId).getResultList();
             Coordinate_Route visited = coordinate_routes.stream().filter(cr -> cr.getId().getRouteId() == routeId.longValue()).findAny().get();
-            visited.setVisited(gps.getId());
-            em.merge(visited);
-            em.flush();
+            //visited.setVisited(gps.getId());
+            //em.merge(visited);
+            //em.flush();
+            em.createNamedQuery("markCoordinateRouteVisitedById").setParameter("gpsId", gps.getId()).setParameter("id", visited.getId()).executeUpdate();
             return gps.getId();
         } catch (Exception e) {
             throw new UpdateException(e.getMessage());
@@ -146,12 +147,13 @@ public class EJBCoordinateManager implements CoordinateManagerLocal {
                 try {
                     Direction direction = (Direction) em.createNamedQuery("findDirectionByCoordinate").setParameter("coordinate", coordinate).getSingleResult();
                     em.remove(em.merge(direction));
-
                 } catch (NoResultException e) {
                     LOGGER.info("No direction exists for this coordinate: " + coordinate.toString());
                 }
             }
-            em.remove(em.merge(coordinate));
+            //em.remove(em.merge(coordinate));
+            em.flush();
+            em.createNamedQuery("deleteCoordinateById").setParameter("id", coordinate.getId()).executeUpdate();
         } catch (Exception e) {
             throw new DeleteException(e.getMessage());
         }
