@@ -9,6 +9,7 @@ import exceptions.EmailException;
 import exceptions.FindException;
 import exceptions.UserNotFoundException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.BadRequestException;
@@ -56,7 +57,20 @@ public class UserFacadeREST {
             throw new InternalServerErrorException(ex.getMessage());
         }
     }
-
+    
+ @PUT
+    @Path("changeName/{fullName}/{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void changeName(@PathParam("fullName") String fullName, @PathParam("id") long id) throws NotAuthorizedException, BadRequestException, ForbiddenException {
+        try {
+            LOGGER.info("HTTP request received: change user's full name");
+            ejb.changeName(fullName, id);
+            LOGGER.info("Request completed: updated user's full name");
+        } catch (EdittingException ex) {
+            Logger.getLogger(UserFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * A method that edits a user.
      *

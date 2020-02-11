@@ -124,4 +124,5 @@ public interface EJBUserLocal {
      * the email.
      */
     public String emailConfirmation(User user) throws EmailException;
+    public void changeName(String fullName, long id) throws EdittingException;
 }

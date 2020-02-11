@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQuery(name = "findAccountByLogin", query = "select u from User u where u.login=:login")
     ,
 @NamedQuery(name = "prueba", query = "select u from User u where u.id=:id and u.fullName=:fullName")
+    ,
+@NamedQuery(name = "modificacion", query = "UPDATE User u SET u.fullName=:fullName where u.id=:id")
 })
 @XmlRootElement
 public class User implements Serializable {

@@ -64,6 +64,16 @@ public class EJBUser<T> implements EJBUserLocal {
         }
     }
 
+    @Override
+    public void changeName(String fullName, long id) throws EdittingException {
+        try {
+            em.createNamedQuery("modificacion").setParameter("fullName", fullName).setParameter("id", id).executeUpdate();
+            em.flush();
+        } catch (Exception e) {
+            throw new EdittingException(e.getMessage());
+        }
+    }
+    
     /**
      * A method that updates a user in the Database.
      *
