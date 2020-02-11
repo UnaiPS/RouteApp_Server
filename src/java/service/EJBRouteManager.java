@@ -134,7 +134,21 @@ public class EJBRouteManager implements RouteManagerLocal {
         }
 
     }
-
+    
+    @Override
+    public void updateRouteByQuery(Route route) throws EdittingException{
+        try{
+            em.createNamedQuery("updateRouteByQuery")
+                    .setParameter("name", route.getName())
+                    .setParameter("mode", route.getMode())
+                    .setParameter("transportMode", route.getTransportMode())
+                    .setParameter("trafficMode", route.getTrafficMode())
+                    .setParameter("id", route.getId()).executeUpdate();
+        }catch(Exception e) {
+            throw new EdittingException(e.getMessage());
+        }
+    }
+    
     /**
      * A method that finds the routes by assigned user in the Database.
      *

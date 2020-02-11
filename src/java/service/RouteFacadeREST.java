@@ -97,6 +97,21 @@ public class RouteFacadeREST {
         }
     }
 
+    @PUT
+    @Path("updateQuery/{route}")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void updateByQuery(@PathParam("route") Route route){
+        LOGGER.info("HTTP request received: Update Route by Query");
+        try{
+            ejb.updateRouteByQuery(route);
+            LOGGER.info("Request completed: Update Route by Query");
+        } catch (EdittingException ex){
+            LOGGER.severe(ex.getMessage());
+            throw new InternalServerErrorException(ex.getMessage());
+        }
+        
+    }
+    
     /**
      * A method that deletes a route.
      *

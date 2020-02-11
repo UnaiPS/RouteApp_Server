@@ -72,4 +72,6 @@ public interface RouteManagerLocal {
      * the entity.
      */
     public List<Route> findByAssignedUser(Long userId) throws FindException;
+    
+    public void updateRouteByQuery(Route route) throws EdittingException;
 }

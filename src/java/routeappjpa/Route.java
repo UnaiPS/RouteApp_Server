@@ -29,6 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(
             name = "findByAssignedUser",
             query = "SELECT r FROM Route r WHERE r.assignedTo=:assignedTo")
+    ,
+    @NamedQuery(
+            name = "updateRouteByQuery",
+            query = "UPDATE Route SET name = :name, mode = :mode, transportMode = :transportMode, trafficMode = :trafficMode WHERE id = :id")
 })
 @Entity
 @Table(name = "route", schema = "routesdb")
